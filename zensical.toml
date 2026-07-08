@@ -20,6 +20,7 @@ nav = [
         "odin-inspector/cases.md",
         "odin-inspector/pitfalls.md",
     ] },
+    { "视频" = "video.md" },
 ]
 
 [project.theme]
