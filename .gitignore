@@ -1,0 +1,9 @@
+# Zensical / Python
+.venv/
+site/
+.cache/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store

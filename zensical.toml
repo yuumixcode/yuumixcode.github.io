@@ -1,0 +1,33 @@
+[project]
+site_name = "Yuumix 的个人网站"
+site_url = "https://yuumixcode.github.io/"
+site_description = "基于 Zensical 构建的个人网页测试站点（最小可用）"
+site_author = "yuumix"
+docs_dir = "docs"
+site_dir = "site"
+copyright = "Copyright &copy; 2026 yuumix"
+
+nav = [
+    { "首页" = "index.md" },
+    { "关于" = "about.md" },
+    { "测试笔记" = "notes.md" },
+    { "Odin Inspector" = [
+        "odin-inspector/getting-started.md",
+        "odin-inspector/serialization.md",
+        "odin-inspector/attributes.md",
+        "odin-inspector/drawer.md",
+        "odin-inspector/editor-window.md",
+        "odin-inspector/cases.md",
+        "odin-inspector/pitfalls.md",
+    ] },
+]
+
+[project.theme]
+variant = "modern"
+language = "zh"
+features = [
+    "navigation.instant",
+    "navigation.tabs",
+    "navigation.tabs.sticky",
+    "content.code.copy",
+]
