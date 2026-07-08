@@ -20,6 +20,20 @@ nav = [
         "odin-inspector/cases.md",
         "odin-inspector/pitfalls.md",
     ] },
+    { "Aesir Architecture" = [
+        "aesir-architecture/index.md",
+        "aesir-architecture/quick-start.md",
+        "aesir-architecture/architecture.md",
+        "aesir-architecture/roadmap.md",
+    ] },
+    { "Aesir Inspector" = [
+        "aesir-inspector/index.md",
+        "aesir-inspector/script-doc-generator.md",
+        "aesir-inspector/summary-tool.md",
+        "aesir-inspector/bilingual-odin.md",
+        "aesir-inspector/safe-utilities.md",
+        "aesir-inspector/examples.md",
+    ] },
     { "视频" = "video.md" },
 ]
 
