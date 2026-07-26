@@ -1,16 +1,19 @@
 [project]
-site_name = "Yuumix 的个人网站"
+site_name = "Yuumix Code Website"
 site_url = "https://yuumixcode.github.io/"
-site_description = "基于 Zensical 构建的个人网页测试站点（最小可用）"
-site_author = "yuumix"
+site_description = "Yuumix Code - 个人知识库/数字花园。"
+site_author = "yuumixcode"
 docs_dir = "docs"
 site_dir = "site"
-copyright = "Copyright &copy; 2026 yuumix"
+copyright = "Copyright &copy; 2026 yuumixcode"
 
 nav = [
     { "首页" = "index.md" },
-    { "关于" = "about.md" },
-    { "测试笔记" = "notes.md" },
+    { "Unity Packages" = [
+        { "Localization" = [
+            "localization/unity-localization-pitfall-log-part-1.md",
+        ] },
+    ] },
     { "Odin Inspector" = [
         "odin-inspector/getting-started.md",
         "odin-inspector/serialization.md",
@@ -19,20 +22,6 @@ nav = [
         "odin-inspector/editor-window.md",
         "odin-inspector/cases.md",
         "odin-inspector/pitfalls.md",
-    ] },
-    { "Aesir Architecture" = [
-        "aesir-architecture/index.md",
-        "aesir-architecture/quick-start.md",
-        "aesir-architecture/architecture.md",
-        "aesir-architecture/roadmap.md",
-    ] },
-    { "Aesir Inspector" = [
-        "aesir-inspector/index.md",
-        "aesir-inspector/script-doc-generator.md",
-        "aesir-inspector/summary-tool.md",
-        "aesir-inspector/bilingual-odin.md",
-        "aesir-inspector/safe-utilities.md",
-        "aesir-inspector/examples.md",
     ] },
     { "视频" = "video.md" },
 ]
