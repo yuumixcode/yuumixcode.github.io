@@ -6,6 +6,7 @@ site_author = "yuumixcode"
 docs_dir = "docs"
 site_dir = "site"
 copyright = "Copyright &copy; 2026 yuumixcode"
+extra_css = ["stylesheets/extra.css"]
 
 nav = [
     { "首页" = "index.md" },

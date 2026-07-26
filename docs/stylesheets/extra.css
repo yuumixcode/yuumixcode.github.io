@@ -1,0 +1,201 @@
+/* ===================================================================
+ * Slides 集成 — 落地页卡片 & 原文 callout
+ * 主题色:#b91c1c(slides 单色红强调,跟原文/站点保持一致)
+ * 背景:白底 + 浅红底 callout,极简
+ * =================================================================== */
+
+:root {
+  --slides-accent: #b91c1c;
+  --slides-accent-bg: #fef2f2;
+  --slides-accent-border: #fecaca;
+  --slides-text: #0a0a0a;
+  --slides-text-2: #404040;
+  --slides-muted: #737373;
+  --slides-border: #e5e5e5;
+  --slides-border-soft: #f0f0f0;
+}
+
+/* ---------- 原文顶部的 callout(单条入口) ---------- */
+.slides-callout {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0 2rem;
+  padding: 0.875rem 1.125rem;
+  background: var(--slides-accent-bg);
+  border: 1px solid var(--slides-accent-border);
+  border-left: 3px solid var(--slides-accent);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: var(--slides-text);
+}
+
+.slides-callout-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.slides-callout-text {
+  flex: 1;
+  color: var(--slides-text-2);
+}
+
+.slides-callout-text strong {
+  color: var(--slides-text);
+  font-weight: 600;
+  margin-right: 0.25rem;
+}
+
+.slides-callout a {
+  color: var(--slides-accent);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease;
+}
+
+.slides-callout a:hover {
+  border-bottom-color: var(--slides-accent);
+}
+
+/* ---------- 落地页:hero 标题区 ---------- */
+.slides-hero {
+  margin: 0 0 2.5rem;
+  padding: 0;
+}
+
+.slides-hero h1 {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--slides-text);
+}
+
+.slides-hero p {
+  margin: 0;
+  color: var(--slides-muted);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+/* ---------- 落地页:卡片网格 ---------- */
+.slides-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.slides-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid var(--slides-border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.slides-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--slides-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.22s ease;
+}
+
+.slides-card:hover {
+  border-color: var(--slides-accent-border);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.08);
+}
+
+.slides-card:hover::before {
+  transform: scaleX(1);
+}
+
+.slides-card-tag {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--slides-accent);
+  background: var(--slides-accent-bg);
+  border: 1px solid var(--slides-accent-border);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
+.slides-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--slides-text);
+  margin: 0 0 0.4rem;
+  line-height: 1.4;
+}
+
+.slides-card-desc {
+  font-size: 0.9rem;
+  color: var(--slides-muted);
+  line-height: 1.55;
+  margin: 0 0 1rem;
+  flex: 1;
+}
+
+.slides-card-cta {
+  font-size: 0.875rem;
+  color: var(--slides-accent);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.slides-card-cta::after {
+  content: "→";
+  transition: transform 0.18s ease;
+}
+
+.slides-card:hover .slides-card-cta::after {
+  transform: translateX(3px);
+}
+
+.slides-card-disabled {
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.slides-card-disabled .slides-card-cta {
+  color: var(--slides-muted);
+}
+
+.slides-card-disabled .slides-card-cta::after {
+  content: "·";
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 600px) {
+  .slides-callout {
+    flex-wrap: wrap;
+  }
+  .slides-grid {
+    grid-template-columns: 1fr;
+  }
+  .slides-hero h1 {
+    font-size: 1.6rem;
+  }
+}

@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Localization 踩坑日志 ① · Slides</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-clike.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-csharp.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #fafafa;
+      --border: #e5e5e5;
+      --border-soft: #f0f0f0;
+      --text: #0a0a0a;
+      --text-2: #404040;
+      --muted: #737373;
+      --accent: #b91c1c;
+      --accent-bg: #fef2f2;
+      --accent-border: #fecaca;
+      --code-bg: #0f172a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* === Slide === */
+    .deck { width: 100%; }
+    .slide {
+      min-height: 100vh;
+      padding: 7vh 8vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+    .slide-inner { max-width: 1180px; margin: 0 auto; width: 100%; }
+
+    /* === Typography === */
+    .slide h1 {
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+    }
+    .slide h2 {
+      font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .slide h3 { font-size: 1.1rem; font-weight: 600; line-height: 1.3; }
+    .slide p { font-size: 1rem; line-height: 1.65; color: var(--text-2); }
+    .muted { color: var(--muted) !important; }
+    .accent { color: var(--accent) !important; }
+
+    .label-eyebrow {
+      display: inline-block;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .label-eyebrow.neutral { color: var(--muted); }
+
+    /* === Grid === */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+
+    /* === Card === */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem 1.75rem;
+    }
+    .card.warning {
+      background: var(--accent-bg);
+      border-color: var(--accent-border);
+    }
+
+    /* === Code === */
+    pre[class*="language-"] {
+      background: var(--code-bg) !important;
+      border-radius: 10px;
+      padding: 1.1rem 1.4rem !important;
+      font-size: 0.78rem;
+      line-height: 1.65;
+      margin: 0.75rem 0;
+      overflow-x: auto;
+      border: none !important;
+    }
+    code[class*="language-"] {
+      font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace !important;
+      text-shadow: none !important;
+    }
+    :not(pre) > code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      background: #f5f5f5;
+      padding: 0.15em 0.45em;
+      border-radius: 4px;
+      font-size: 0.88em;
+      color: var(--text);
+    }
+    .token.comment, .token.prolog, .token.doctype, .token.cdata { color: #94a3b8; }
+    .token.keyword { color: #f472b6; }
+    .token.string { color: #86efac; }
+    .token.function { color: #93c5fd; }
+    .token.class-name { color: #fcd34d; }
+    .token.punctuation { color: #cbd5e1; }
+    .token.operator { color: #fda4af; }
+    .token.boolean, .token.number { color: #fbbf24; }
+
+    /* === Tag === */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      background: var(--accent-bg);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .tag.neutral {
+      background: #f5f5f5;
+      color: var(--text-2);
+      border-color: var(--border);
+    }
+
+    /* === Pitfall number === */
+    .pitfall-num {
+      font-size: clamp(6rem, 15vw, 13rem);
+      font-weight: 800;
+      line-height: 0.85;
+      color: var(--accent);
+      letter-spacing: -0.05em;
+      font-variant-numeric: tabular-nums;
+      user-select: none;
+    }
+
+    /* === Principle === */
+    .principle { max-width: 880px; margin: 0 auto; text-align: center; }
+    .principle .quote {
+      font-size: clamp(1.4rem, 2.8vw, 2.1rem);
+      font-weight: 600;
+      line-height: 1.4;
+      letter-spacing: -0.015em;
+      color: var(--text);
+    }
+    .principle .note {
+      color: var(--text-2);
+      margin-top: 2rem;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    /* === Mermaid container === */
+    .mermaid {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem 2rem;
+      margin: 1.25rem 0;
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      overflow-x: auto;
+    }
+    .mermaid svg { max-width: 100%; height: auto; }
+
+    /* === Cover === */
+    .cover .env {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 2.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .cover .env span { display: flex; align-items: center; }
+
+    /* === Progress bar === */
+    .progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: var(--accent);
+      z-index: 100;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 8px rgba(185, 28, 28, 0.3);
+    }
+
+    /* === Nav === */
+    .nav {
+      position: fixed;
+      bottom: 1.5rem; right: 1.5rem;
+      display: flex;
+      gap: 0.3rem;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.85rem;
+      z-index: 100;
+      font-variant-numeric: tabular-nums;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .nav button {
+      width: 30px; height: 30px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-2);
+      transition: background 0.15s;
+    }
+    .nav button:hover { background: var(--card); color: var(--text); }
+    .nav .count { padding: 0 0.5rem; color: var(--text-2); font-weight: 500; }
+
+    .hint {
+      position: fixed;
+      bottom: 1.75rem; left: 1.5rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+      z-index: 100;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+
+    /* === Help overlay === */
+    .help {
+      position: fixed; inset: 0;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+    .help.show { display: flex; }
+    .help-content { max-width: 360px; width: 90%; }
+    .help h3 {
+      font-size: 1.05rem;
+      margin-bottom: 1.25rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .help table { width: 100%; font-size: 0.9rem; border-collapse: collapse; }
+    .help td { padding: 0.5rem 0; }
+    .help td:first-child {
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      width: 40%;
+    }
+    .help td:last-child { color: var(--text-2); }
+
+    /* === Print === */
+    @page { size: 16in 9in; margin: 0; }
+    @media print {
+      .nav, .hint, .progress, .help { display: none !important; }
+      .slide {
+        min-height: 100vh;
+        height: 100vh;
+        page-break-after: always;
+        padding: 1.5cm 2.5cm;
+      }
+      pre[class*="language-"] { font-size: 0.7rem; }
+    }
+
+    /* === Entry animation === */
+    .slide-inner > * {
+      animation: fadeUp 0.5s ease-out backwards;
+    }
+    .slide-inner > *:nth-child(1) { animation-delay: 0s; }
+    .slide-inner > *:nth-child(2) { animation-delay: 0.08s; }
+    .slide-inner > *:nth-child(3) { animation-delay: 0.16s; }
+    .slide-inner > *:nth-child(4) { animation-delay: 0.24s; }
+    .slide-inner > *:nth-child(5) { animation-delay: 0.32s; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* === Responsive === */
+    @media (max-width: 900px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .slide { padding: 6vh 6vw; }
+      .hint { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress" style="width: 0%;"></div>
+  <div class="hint">← → · ? · F</div>
+
+  <div class="nav">
+    <button onclick="prevSlide()" aria-label="上一张">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <span class="count"><span id="cur">1</span> / <span id="total">0</span></span>
+    <button onclick="nextSlide()" aria-label="下一张">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </div>
+
+  <main class="deck" id="deck">
+
+    <!-- ============================================ -->
+    <!-- Slide 1 / 15 — Cover -->
+    <!-- ============================================ -->
+    <section class="slide cover">
+      <div class="slide-inner">
+        <span class="label-eyebrow">Unity Localization 踩坑日志 · ①</span>
+        <h1 style="margin-top: 1.5rem;">三个让 Localization<br><span class="accent">原地爆炸</span> 的坑</h1>
+        <p style="margin-top: 1.75rem; font-size: 1.15rem; max-width: 720px; color: var(--text-2);">
+          从崩溃时序、切换闪烁、状态污染三个真实场景出发，<br>看清 Unity Localization 几个没人告诉你的隐藏契约。
+        </p>
+        <div class="env">
+          <span>Unity 2022.3.62f3</span>
+          <span>Localization 1.5.3</span>
+          <span>Addressables 1.22.3</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 2 / 15 — Agenda -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="label-eyebrow neutral">AGENDA</span>
+        <h2 style="margin: 1rem 0 3rem;">本辑目录</h2>
+        <div class="grid-3">
+          <div class="card">
+            <div style="font-size: 2.8rem; font-weight: 800; color: var(--accent); line-height: 0.9; letter-spacing: -0.04em;">01</div>
+            <h3 style="margin-top: 1.25rem;">不要在 Completed 里切语言</h3>
+            <p class="muted" style="font-size: 0.9rem; margin-top: 0.5rem;">ArgumentException · 同 key 冲突</p>
+          </div>
+          <div class="card">
+            <div style="font-size: 2.8rem; font-weight: 800; color: var(--accent); line-height: 0.9; letter-spacing: -0.04em;">02</div>
+            <h3 style="margin-top: 1.25rem;">切换语言时的闪烁</h3>
+            <p class="muted" style="font-size: 0.9rem; margin-top: 0.5rem;">StringTable 与 AssetTable 异步竞速</p>
+          </div>
+          <div class="card">
+            <div style="font-size: 2.8rem; font-weight: 800; color: var(--accent); line-height: 0.9; letter-spacing: -0.04em;">03</div>
+            <h3 style="margin-top: 1.25rem;">退出时别访问 SelectedLocale</h3>
+            <p class="muted" style="font-size: 0.9rem; margin-top: 0.5rem;">ResetState 触发系统语言污染</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 3 / 15 — Pitfall 1 Title -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div style="display: flex; align-items: center; gap: 3.5rem; flex-wrap: wrap;">
+          <div class="pitfall-num">01</div>
+          <div style="flex: 1; min-width: 320px;">
+            <span class="tag">崩溃</span>
+            <h2 style="margin-top: 1.5rem; max-width: 760px;">不要在 InitializationOperation<br>的 Completed 回调中<br>调用 SetSelectedLocale</h2>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 4 / 15 — Pitfall 1 Reason -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <h2>为什么崩？</h2>
+        <p class="muted" style="margin: 0.75rem 0 1.25rem;">Completed 在 <code>Complete()</code> 内部同步触发，调用栈尚未展开。</p>
+        <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant C as Code
+    participant I as Init Op
+    participant V as VAB Dict
+    participant T as Tables
+
+    C-&gt;I: PreloadTables()
+    I-&gt;V: Add(bundle A)
+    Note over I,T: Complete() 内部执行
+    I--&gt;C: Completed 回调（同步）
+    C-&gt;T: SetSelectedLocale(B)
+    T-&gt;T: ReleaseAllTables()
+    Note right of T: 只释放表引用 &lt;br/&gt;bundle A 仍在字典
+    T-&gt;V: Add(bundle B)
+    V--&gt;T: ArgumentException
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.95rem;">调用栈还在 Addressables 完成逻辑里，<code>SetSelectedLocale</code> 又启动了新的异步操作链 —— 撞 key 就崩。</p>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 5 / 15 — Pitfall 1 Solutions -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <h2 style="margin-bottom: 0.4rem;">两种修复方式</h2>
+        <p class="muted" style="margin-bottom: 1.5rem;">核心思路：把语言选择搬出 init 流程，或等 init 真正结束。</p>
+        <div class="grid-2">
+          <div class="card">
+            <span class="tag" style="margin-bottom: 0.6rem;">A · 推荐</span>
+            <h3>IStartupLocaleSelector</h3>
+            <p style="font-size: 0.9rem; margin-top: 0.4rem; margin-bottom: 0.75rem;">把语言选择烘焙进初始化流程，零冗余。</p>
+<pre><code class="language-csharp">[Serializable]
+public class SavedLocaleSelector
+    : IStartupLocaleSelector
+{
+    public Locale GetStartupLocale(
+        ILocalesProvider available)
+    {
+        var code = LoadFromSave();
+        if (string.IsNullOrEmpty(code))
+            return null;
+        return available.GetLocale(
+            new LocaleIdentifier(code));
+    }
+}</code></pre>
+            <p class="muted" style="font-size: 0.82rem; margin-top: 0.5rem;">→ Inspector 放到 Startup Locale Selectors 列表第一位</p>
+          </div>
+          <div class="card">
+            <span class="tag neutral" style="margin-bottom: 0.6rem;">B · 兜底</span>
+            <h3>协程 yield 等 init 结束</h3>
+            <p style="font-size: 0.9rem; margin-top: 0.4rem; margin-bottom: 0.75rem;">yield 让 <code>Complete()</code> 完全返回后再切。</p>
+<pre><code class="language-csharp">IEnumerator ApplySavedLocale()
+{
+    var op = LocalizationSettings
+        .InitializationOperation;
+
+    if (!op.IsDone)
+        yield return op;
+    // 此时 Complete() 已真正结束
+
+    var target = LocalizationSettings
+        .AvailableLocales
+        .GetLocale(
+            new LocaleIdentifier(code));
+    if (target != null)
+        LocalizationSettings
+            .SelectedLocale = target;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 6 / 15 — Pitfall 1 Principle -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner principle">
+        <span class="label-eyebrow">坑 ① · 关键原则</span>
+        <p class="quote" style="margin-top: 1.5rem;">Completed 回调本身是安全的同步委托调用，<br>但 <span class="accent">不要在其中启动新的 Addressables 异步操作链</span>。</p>
+        <p class="note">普通同步 Unity API（SetActive、设置文本、读取已加载的数据）在 Completed 里都没问题。<br>限制仅在于：不要启动会改变 Addressables 资源状态的操作 —— <code>SetSelectedLocale</code> 内部会这么做，所以是禁区。</p>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 7 / 15 — Pitfall 2 Title -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div style="display: flex; align-items: center; gap: 3.5rem; flex-wrap: wrap;">
+          <div class="pitfall-num">02</div>
+          <div style="flex: 1; min-width: 320px;">
+            <span class="tag">闪烁</span>
+            <h2 style="margin-top: 1.5rem; max-width: 760px;">切换语言时<br>文本和字体<br>不是同时更新</h2>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 8 / 15 — Pitfall 2 Reason -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <h2>为什么闪？</h2>
+        <p class="muted" style="margin: 0.75rem 0 1.25rem;"><code>SetSelectedLocale</code> 释放旧表后，StringTable 和 AssetTable 走两条独立的异步加载链。</p>
+        <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant U as User
+    participant S as System
+    participant ST as StringTable
+    participant AT as AssetTable
+
+    U-&gt;S: SetSelectedLocale(B)
+    S-&gt;S: ReleaseAllTables(A)
+    par 异步并行
+        S-&gt;ST: 加载 B.StringTable
+        S-&gt;AT: 加载 B.AssetTable
+    end
+    ST--&gt;S: 50ms 完成
+    Note over S: 文本已变 &lt;br/&gt;字体还是 A 的
+    AT--&gt;S: 120ms 完成
+    Note over S: 字体最终也变 B 的
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.95rem;">肉眼可见的"先变字体后变文本"（或反过来）—— 切回 A 语言时同样问题。</p>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 9 / 15 — Pitfall 2 Solutions -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <h2 style="margin-bottom: 0.4rem;">让切换瞬间完成</h2>
+        <p class="muted" style="margin-bottom: 1.5rem;">思路：表已经在内存里 → 切语言就是改指针，不会有加载延迟。</p>
+        <div class="grid-2">
+          <div class="card">
+            <span class="tag" style="margin-bottom: 0.6rem;">A · 推荐</span>
+            <h3>Preload All Tables</h3>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">在 <code>LocalizationSettings.asset</code> 里勾选所有语言的 Preload，让所有 StringTable 和 AssetTable 在 init 时全部加载并常驻内存。</p>
+            <div style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px dashed var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size: 0.88rem;">
+              <div><span class="accent">✓</span> 切换零延迟</div>
+              <div><span class="muted">✗</span> 内存占用增加</div>
+            </div>
+            <p class="muted" style="font-size: 0.82rem; margin-top: 0.5rem;">→ 适合语言数量不多（2-5 种）的项目</p>
+          </div>
+          <div class="card">
+            <span class="tag neutral" style="margin-bottom: 0.6rem;">B · 替代</span>
+            <h3>代码持有 Table 引用</h3>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">在代码里持久持有 <code>LocalizedStringTable</code> 等引用，订阅 <code>TableChanged</code> 事件 —— 系统会为新语言重新加载表并通知你，而不是彻底释放。</p>
+            <div style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px dashed var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size: 0.88rem;">
+              <div><span class="accent">✓</span> 内存可控</div>
+              <div><span class="muted">✗</span> 需要手动管理</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 10 / 15 — Pitfall 3 Title -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div style="display: flex; align-items: center; gap: 3.5rem; flex-wrap: wrap;">
+          <div class="pitfall-num">03</div>
+          <div style="flex: 1; min-width: 320px;">
+            <span class="tag">状态污染</span>
+            <h2 style="margin-top: 1.5rem; max-width: 760px;">退出游戏时<br>不要访问<br>SelectedLocale</h2>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 11 / 15 — Pitfall 3 Reason (1/2) — Trigger Chain -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="label-eyebrow">坑 ③ · 为什么崩 · ① / ②</span>
+        <h2 style="margin: 0.5rem 0 0.5rem;">触发链：ResetState 把缓存清空</h2>
+        <p class="muted" style="margin: 0.5rem 0 1.25rem;">退出 Play Mode 时 <code>ResetState()</code> 清空缓存，再次访问 <code>SelectedLocale</code> 会触发完整的重新初始化管线。</p>
+        <div class="mermaid">
+flowchart TD
+    A["退出 Play Mode"] --&gt; B["ResetState"]
+    B --&gt; C["m_SelectedLocaleAsync = default"]
+    C --&gt; D{"代码访问 SelectedLocale"}
+    D --&gt; E["GetSelectedLocaleAsync"]
+    E --&gt; F["SelectActiveLocale"]
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.95rem;">现在所有坑都准备好了 —— 接下来 <code>SelectActiveLocale</code> 会遍历 Selectors 找语言 → <span class="accent">下一页</span>。</p>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 12 / 15 — Pitfall 3 Reason (2/2) — Selector + Pollution -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="label-eyebrow">坑 ③ · 为什么崩 · ② / ②</span>
+        <h2 style="margin: 0.5rem 0 0.5rem;">Selector 链掉链子，系统语言兜底</h2>
+        <p class="muted" style="margin: 0.5rem 0 1.25rem;">Domain 销毁中，自定义 Selector 拿不到上下文，3 个里 2 个返回 <code>null</code>，兜底的那个成了替罪羊。</p>
+        <div class="mermaid">
+flowchart TD
+    A["SelectActiveLocale"] --&gt; B["SavedLocaleSelector &lt;br/&gt;→ null"]
+    A --&gt; C["CommandLineSelector &lt;br/&gt;→ null"]
+    A --&gt; D["SystemLocaleSelector &lt;br/&gt;→ ja  ✓"]
+    D --&gt; E["SelectedLocaleChanged 事件"]
+    E --&gt; F["回调把系统语言写入存档"]
+    F --&gt; G["💥 状态污染"]
+    style B fill:#f5f5f5,stroke:#d4d4d4,color:#737373
+    style C fill:#f5f5f5,stroke:#d4d4d4,color:#737373
+    style G fill:#fef2f2,stroke:#b91c1c,color:#b91c1c,stroke-width:2px
+        </div>
+        <p style="margin-top: 0.75rem; font-size: 0.95rem;">玩家精心选的语言被静默覆盖 —— <span class="accent">下一次启动看到的就是 ja</span>，而且你还不知道为什么。</p>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 13 / 15 — Pitfall 3 Solution -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <h2 style="margin-bottom: 0.4rem;">核心原则：用字符串缓存语言代码</h2>
+        <p class="muted" style="margin-bottom: 1.25rem;">退出时读缓存，绝不碰 Localization 系统。</p>
+<pre><code class="language-csharp">// Model 层 — 纯字段，不碰 LocalizationSettings
+string _languageCode = "zh-CN";
+public string CurrentLanguageCode =&gt; _languageCode;
+
+// Service 层 — 通过事件同步，退出时先取消订阅再保存
+void OnInitialize()
+{
+    LoadGameSettings();
+    LocalizationSettings.SelectedLocaleChanged
+        += OnSelectedLocaleChanged;
+    Application.quitting += OnApplicationQuitting;
+}
+
+void OnSelectedLocaleChanged(Locale locale)
+{
+    if (locale != null)
+        _languageCode = locale.Identifier.Code;
+}
+
+void OnApplicationQuitting()
+{
+    // 先断开事件订阅，阻止 Localization 清理时的回调覆盖
+    LocalizationSettings.SelectedLocaleChanged
+        -= OnSelectedLocaleChanged;
+    SaveGameSettings();  // 再保存
+}</code></pre>
+        <p style="margin-top: 1rem; font-size: 0.95rem;"><span class="accent">关键：</span>先取消订阅，再保存 —— 顺序反了会被 Localization 清理时的回调污染。</p>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 14 / 15 — Summary -->
+    <!-- ============================================ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="label-eyebrow neutral">SUMMARY</span>
+        <h2 style="margin: 1rem 0 2.25rem;">三句话总结</h2>
+        <div style="display: flex; flex-direction: column; gap: 1.1rem;">
+          <div class="card warning">
+            <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+              <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent); min-width: 36px; line-height: 1.2;">01</div>
+              <div>
+                <strong style="font-size: 1.02rem;">Completed 是同步回调，但其中不能启动新的 Addressables 异步操作链。</strong>
+                <p class="muted" style="font-size: 0.92rem; margin-top: 0.35rem;">语言选择走 IStartupLocaleSelector，或 yield 等 init 完全结束。</p>
+              </div>
+            </div>
+          </div>
+          <div class="card warning">
+            <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+              <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent); min-width: 36px; line-height: 1.2;">02</div>
+              <div>
+                <strong style="font-size: 1.02rem;">切换语言闪烁 = StringTable 和 AssetTable 异步竞速。</strong>
+                <p class="muted" style="font-size: 0.92rem; margin-top: 0.35rem;">解法是让所有表常驻内存（Preload），或代码持有引用。</p>
+              </div>
+            </div>
+          </div>
+          <div class="card warning">
+            <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+              <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent); min-width: 36px; line-height: 1.2;">03</div>
+              <div>
+                <strong style="font-size: 1.02rem;">退出时用字符串缓存语言代码。</strong>
+                <p class="muted" style="font-size: 0.92rem; margin-top: 0.35rem;">断开 Localization 事件订阅后再保存，避免系统语言污染存档。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Slide 15 / 15 — Thanks -->
+    <!-- ============================================ -->
+    <section class="slide cover">
+      <div class="slide-inner" style="text-align: center;">
+        <span class="label-eyebrow" style="display: inline-block;">Q & A</span>
+        <h1 style="margin-top: 1.5rem; font-size: clamp(3rem, 7vw, 5.5rem);">感谢观看</h1>
+        <p style="margin-top: 2rem; font-size: 1.05rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+          原文：Localization 踩坑日志 ①
+        </p>
+        <p class="muted" style="font-size: 0.88rem; margin-top: 0.4rem;">Unity 2022.3.62f3 · Localization 1.5.3 · Addressables 1.22.3</p>
+        <div class="env" style="justify-content: center; margin-top: 3rem;">
+          <span>← → 翻页</span>
+          <span>F 全屏</span>
+          <span>? 帮助</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="help" id="help" onclick="hideHelp()">
+    <div class="help-content">
+      <h3>键盘快捷键</h3>
+      <table>
+        <tr><td>← / →</td><td>上 / 下页</td></tr>
+        <tr><td>Space</td><td>下页</td></tr>
+        <tr><td>Home / End</td><td>首页 / 末页</td></tr>
+        <tr><td>F</td><td>全屏切换</td></tr>
+        <tr><td>?</td><td>显示 / 隐藏帮助</td></tr>
+        <tr><td>Esc</td><td>退出帮助 / 全屏</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Init Mermaid
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      securityLevel: 'loose',
+      themeVariables: {
+        primaryColor: '#ffffff',
+        primaryTextColor: '#0a0a0a',
+        primaryBorderColor: '#b91c1c',
+        lineColor: '#525252',
+        secondaryColor: '#fafafa',
+        tertiaryColor: '#f5f5f5',
+        fontFamily: 'Outfit, -apple-system, sans-serif',
+        fontSize: '14px',
+        noteBkgColor: '#fef2f2',
+        noteTextColor: '#0a0a0a',
+        noteBorderColor: '#fecaca',
+        actorBkg: '#fafafa',
+        actorBorder: '#0a0a0a',
+        actorTextColor: '#0a0a0a',
+        actorLineColor: '#525252',
+        signalColor: '#0a0a0a',
+        signalTextColor: '#0a0a0a',
+        labelBoxBkgColor: '#ffffff',
+        labelBoxBorderColor: '#b91c1c',
+        labelTextColor: '#b91c1c',
+        loopTextColor: '#0a0a0a',
+        activationBorderColor: '#b91c1c',
+        activationBkgColor: '#fef2f2'
+      },
+      sequence: {
+        diagramMarginX: 50,
+        diagramMarginY: 10,
+        actorMargin: 70,
+        width: 150,
+        height: 45,
+        boxMargin: 10,
+        boxTextMargin: 5,
+        noteMargin: 10,
+        messageMargin: 35
+      },
+      flowchart: {
+        diagramPadding: 12,
+        htmlLabels: true,
+        curve: 'basis'
+      }
+    });
+
+    // Slides
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    document.getElementById('total').textContent = total;
+    let current = 0;
+
+    function showSlide(i) {
+      if (i < 0 || i >= total) return;
+      slides[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      current = i;
+      updateUI();
+    }
+    function nextSlide() { showSlide(Math.min(current + 1, total - 1)); }
+    function prevSlide() { showSlide(Math.max(current - 1, 0)); }
+    function updateUI() {
+      document.getElementById('cur').textContent = current + 1;
+      document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+    }
+
+    // Track scroll to update counter
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          const idx = Array.from(slides).indexOf(entry.target);
+          if (idx >= 0 && idx !== current) {
+            current = idx;
+            updateUI();
+          }
+        }
+      });
+    }, { threshold: [0.5] });
+    slides.forEach(s => observer.observe(s));
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        showSlide(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        showSlide(total - 1);
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        if (document.fullscreenElement) document.exitFullscreen();
+        else document.documentElement.requestFullscreen();
+      } else if (e.key === '?') {
+        e.preventDefault();
+        toggleHelp();
+      } else if (e.key === 'Escape') {
+        hideHelp();
+      }
+    });
+
+    // Help
+    function toggleHelp() {
+      document.getElementById('help').classList.toggle('show');
+    }
+    function hideHelp() {
+      document.getElementById('help').classList.remove('show');
+    }
+
+    // Highlight code with Prism
+    if (window.Prism) {
+      Prism.highlightAll();
+    }
+
+    // Init
+    updateUI();
+  </script>
+</body>
+</html>

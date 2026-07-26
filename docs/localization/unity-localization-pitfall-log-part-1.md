@@ -4,6 +4,11 @@
 
 ---
 
+<div class="slides-callout">
+  <span class="slides-callout-icon">🎞</span>
+  <span class="slides-callout-text"><strong>想看幻灯片版?</strong>Part 1 整理成了 15 页 slides,适合分享 / 投影。<a href="slides/part-1.html" target="_blank" rel="noopener">👉 在新窗口打开</a></span>
+</div>
+
 ## 一、禁止在 InitializationOperation 的 Completed 事件中调用 SetSelectedLocale
 
 ### 原因简析
