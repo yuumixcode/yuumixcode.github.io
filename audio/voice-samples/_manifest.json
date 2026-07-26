@@ -1,0 +1,30 @@
+{
+  "test_text": "欢迎来到 Unity Localization 踩坑日志第一辑,今天讲三个让 Localization 原地爆炸的真实坑。",
+  "candidates": [
+    {
+      "voice_id": "male-qn-jingying",
+      "label": "01_male-elite",
+      "desc": "男 · 精英青年(沉稳专业)"
+    },
+    {
+      "voice_id": "Chinese (Mandarin)_Sincere_Adult",
+      "label": "02_male-sincere",
+      "desc": "男 · 真诚青年(自然朴实)"
+    },
+    {
+      "voice_id": "Chinese (Mandarin)_Radio_Host",
+      "label": "03_male-radio",
+      "desc": "男 · 电台男主播(讲解感强)"
+    },
+    {
+      "voice_id": "Chinese (Mandarin)_Warm_Bestie",
+      "label": "04_female-warm",
+      "desc": "女 · 温暖闺蜜(亲切自然)"
+    },
+    {
+      "voice_id": "Chinese (Mandarin)_News_Anchor",
+      "label": "05_female-news",
+      "desc": "女 · 新闻女声(专业正式)"
+    }
+  ]
+}
