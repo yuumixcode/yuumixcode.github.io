@@ -35,11 +35,10 @@ nav = [
         "odin-inspector/cases.md",
         "odin-inspector/pitfalls.md",
     ] },
-    { "Unity 知识库" = [
+    { "Unity" = [
         { "Localization" = [
             "unity-knowledge-base/localization/unity-localization-pitfall-log.md",
             "unity-knowledge-base/localization/localization-question.md",
-            "unity-knowledge-base/localization/slides/index.md",
             "unity-knowledge-base/localization/slides/index.md",
         ] },
         { "Addressables" = "unity-knowledge-base/addressables/addressable-faq.md" },
@@ -47,6 +46,7 @@ nav = [
     { "Zensical" = [
         "zensical/index.md",
         "zensical/add-video.md",
+        "zensical/custom-fonts.md",
     ] },
 ]
 
