@@ -1,13 +1,11 @@
-# Localization 踩坑日志｜一
+# Localization 踩坑日志
 
 > Unity 2022.3.62f3 | Localization 1.5.3 | Addressables 1.22.3
 
 ---
 
-<div class="slides-callout">
-  <span class="slides-callout-icon">🎞</span>
-  <span class="slides-callout-text"><strong>想看幻灯片版?</strong>Part 1 整理成了 15 页 slides,适合分享 / 投影。<a href="slides/part-1.html" target="_blank" rel="noopener">👉 在新窗口打开</a></span>
-</div>
+!!! tip "想看幻灯片版?"
+    整理成了 15 页 slides，适合分享 / 投影。[👉 在新窗口打开](slides/slides.html){target="_blank" rel="noopener"}
 
 ## 一、禁止在 InitializationOperation 的 Completed 事件中调用 SetSelectedLocale
 

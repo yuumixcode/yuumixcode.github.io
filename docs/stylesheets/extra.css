@@ -1,7 +1,7 @@
 /* ===================================================================
- * Slides 集成 — 落地页卡片 & 原文 callout
+ * Slides 落地页 — 卡片网格 & hero 区
  * 主题色:#b91c1c(slides 单色红强调,跟原文/站点保持一致)
- * 背景:白底 + 浅红底 callout,极简
+ * 背景:白底,极简
  * =================================================================== */
 
 :root {
@@ -13,50 +13,6 @@
   --slides-muted: #737373;
   --slides-border: #e5e5e5;
   --slides-border-soft: #f0f0f0;
-}
-
-/* ---------- 原文顶部的 callout(单条入口) ---------- */
-.slides-callout {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 1.5rem 0 2rem;
-  padding: 0.875rem 1.125rem;
-  background: var(--slides-accent-bg);
-  border: 1px solid var(--slides-accent-border);
-  border-left: 3px solid var(--slides-accent);
-  border-radius: 6px;
-  font-size: 0.95rem;
-  color: var(--slides-text);
-}
-
-.slides-callout-icon {
-  font-size: 1.15rem;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-.slides-callout-text {
-  flex: 1;
-  color: var(--slides-text-2);
-}
-
-.slides-callout-text strong {
-  color: var(--slides-text);
-  font-weight: 600;
-  margin-right: 0.25rem;
-}
-
-.slides-callout a {
-  color: var(--slides-accent);
-  text-decoration: none;
-  font-weight: 500;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.15s ease;
-}
-
-.slides-callout a:hover {
-  border-bottom-color: var(--slides-accent);
 }
 
 /* ---------- 落地页:hero 标题区 ---------- */
@@ -189,9 +145,6 @@
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 600px) {
-  .slides-callout {
-    flex-wrap: wrap;
-  }
   .slides-grid {
     grid-template-columns: 1fr;
   }

@@ -8,12 +8,23 @@ site_dir = "site"
 copyright = "Copyright &copy; 2026 yuumixcode"
 extra_css = ["stylesheets/extra.css"]
 
+# 导航规范:Header 显示中文(品牌/工具名保留英文),内部页面按需展开
 nav = [
     { "首页" = "index.md" },
-    { "Unity Packages" = [
-        { "Localization" = [
-            "localization/unity-localization-pitfall-log-part-1.md",
-        ] },
+    { "Aesir Architecture" = [
+        "aesir-architecture/index.md",
+        "aesir-architecture/architecture.md",
+        "aesir-architecture/quick-start.md",
+        "aesir-architecture/roadmap.md",
+    ] },
+    { "Aesir Modules" = "aesir-modules/index.md" },
+    { "Aesir Inspector" = [
+        "aesir-inspector/index.md",
+        "aesir-inspector/bilingual-odin.md",
+        "aesir-inspector/examples.md",
+        "aesir-inspector/safe-utilities.md",
+        "aesir-inspector/script-doc-generator.md",
+        "aesir-inspector/summary-tool.md",
     ] },
     { "Odin Inspector" = [
         "odin-inspector/getting-started.md",
@@ -24,7 +35,19 @@ nav = [
         "odin-inspector/cases.md",
         "odin-inspector/pitfalls.md",
     ] },
-    { "视频" = "video.md" },
+    { "Unity 知识库" = [
+        { "Localization" = [
+            "unity-knowledge-base/localization/unity-localization-pitfall-log.md",
+            "unity-knowledge-base/localization/localization-question.md",
+            "unity-knowledge-base/localization/slides/index.md",
+            "unity-knowledge-base/localization/slides/index.md",
+        ] },
+        { "Addressables" = "unity-knowledge-base/addressables/addressable-faq.md" },
+    ] },
+    { "Zensical" = [
+        "zensical/index.md",
+        "zensical/add-video.md",
+    ] },
 ]
 
 [project.theme]
