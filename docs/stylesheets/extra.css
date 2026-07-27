@@ -1,29 +1,26 @@
 /* ===================================================================
- * 字体覆盖(中英分离策略)
+ * 字体覆盖(Wcowin 方案:中英文统一用 LXGW WenKai)
  *   https://wcowin.work/Zensical-Chinese-Tutorial/blog/advanced/custom-fonts/
  *
  * 思路:
- *   - body font-family 用 "Inter" 在前,LXGW WenKai 兜底
- *     浏览器对每个字符按 font-family 列表逐个匹配:
- *       英文 → Inter(ASCII 字形,无中文字形)
- *       中文 → Inter 没有中文字形,回退到 LXGW WenKai(楷体中文字形)
- *   - 字体源在 zensical.toml 的 extra_css 里:
- *       LXGW WenKai → zeoseven CDN(国内)
- *       Inter       → font.im(Google Fonts 国内反代)
+ *   - LXGW WenKai 同时有中英文字形(楷体中文 + 楷体英文)
+ *   - body font-family 只用 "LXGW WenKai",中英都用它
+ *     整体风格统一,都是楷体
+ *   - 字体源在 zensical.toml 的 extra_css 里,zeoseven CDN(国内)
  *
  * 关键:code/pre 用系统 monospace stack,不引外部字体,
  *      保证等宽不被 LXGW 楷体污染
  * =================================================================== */
 
 body {
-  font-family: "Inter", "LXGW WenKai";
+  font-family: "LXGW WenKai";
   font-weight: normal;
 }
 
-/* 标题继承 body,自动享受中英分离 */
+/* 标题继承 body,显式声明以防主题特殊处理 */
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Inter", "LXGW WenKai";
-  font-weight: 600;
+  font-family: "LXGW WenKai";
+  font-weight: 700;
 }
 
 /* 代码块保持等宽(系统 monospace stack,不引外部字体) */

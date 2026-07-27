@@ -8,8 +8,7 @@ site_dir = "site"
 copyright = "Copyright &copy; 2026 yuumixcode"
 extra_css = [
     "stylesheets/extra.css",
-    "https://fontsapi.zeoseven.com/292/main/result.css",  # 霞鹜文楷 LXGW WenKai(zeoseven CDN,中文)
-    "https://fonts.font.im/css2?family=Inter:wght@400;500;600;700&display=swap",  # Inter 英文字体(font.im 反代 Google Fonts,国内可用)
+    "https://fontsapi.zeoseven.com/292/main/result.css",  # 霞鹜文楷 LXGW WenKai(zeoseven CDN,中英文都用它)
 ]
 
 # 导航规范:Header 显示中文(品牌/工具名保留英文),内部页面按需展开
