@@ -35,17 +35,17 @@
 └── site/                  # 构建产物(不入仓,`zensical build --clean` 重建)
 ```
 
-### 2.1 顶级 Header(7 个,固定)
+### 2.1 顶级 Header(6 个,固定)
 
 | Header | 路径 | 用途 |
 | --- | --- | --- |
 | 首页 | `index.md` | 网站入口、介绍、导览 |
-| Aesir Architecture | `aesir-architecture/` | 架构框架文档 |
-| Aesir Modules | `aesir-modules/` | Aesir 系列模块总览(跨包索引) |
-| Aesir Inspector | `aesir-inspector/` | Inspector 编辑器扩展文档 |
+| Aesir Packages | `aesir-architecture/`、`aesir-modules/`、`aesir-inspector/` | Aesir 系列三个包收纳到一个 Header 下,各包作为子分组 |
 | Odin Inspector | `odin-inspector/` | Odin Inspector 实战笔记 |
 | Unity 知识库 | `unity-knowledge-base/` | Unity 通用技术沉淀(按子主题分子目录) |
 | Zensical | `zensical/` | 静态站工具本身的使用笔记 |
+
+注:Aesir Packages 下面是三个平级子分组(Architecture / Modules / Inspector),不是再拆 header。
 
 新增顶级 Header **必须** 跟用户确认,不要自动加。
 
