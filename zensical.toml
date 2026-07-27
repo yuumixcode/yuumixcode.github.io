@@ -1,5 +1,5 @@
 [project]
-site_name = "Yuumix Code Website"
+site_name = "歪歪空间"
 site_url = "https://yuumixcode.github.io/"
 site_description = "Yuumix Code - 个人知识库/数字花园。"
 site_author = "yuumixcode"
@@ -65,6 +65,10 @@ nav = [
 [project.theme]
 variant = "modern"
 language = "zh"
+favicon = "assets/images/avatar.png"  # favicon 用 GitHub 头像 PNG(从 https://github.com/yuumixcode.png 拉取,256×256)
+# logo 必须 .svg(主题模板在 .icons/<path>.svg 找矢量模板)
+# 如果你有头像的 SVG 源文件,把下面这行取消注释,文件放到 docs/assets/images/avatar.svg
+# logo = "assets/images/avatar.svg"
 features = [
     "navigation.instant",
     "navigation.tabs",
