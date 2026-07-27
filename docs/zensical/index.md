@@ -11,8 +11,8 @@
 
 ## 站点关键决策
 
-- **框架**:Zensical(基于 Material for MkDocs)
+- **框架**:Zensical(由 Material for MkDocs 作者用 Rust 重写)
 - **主题**:`modern` 变体,语言 `zh`
-- **字体**:中文「霞鹜文楷」+ 英文 Inter + 代码系统 monospace(详见[字体指南](custom-fonts.md))
+- **字体**:中英文统一「霞鹜文楷」(LXGW WenKai)+ 代码系统 monospace(详见[字体指南](custom-fonts.md))
 - **样式**:`docs/stylesheets/extra.css` 集中管理所有自定义 CSS
 - **部署**:GitHub Pages,工作流 `.github/workflows/`
