@@ -222,4 +222,4 @@ md_in_html = true
 - [qiaomu-bento-ppt GitHub](https://github.com/joeseesun/qiaomu-bento-ppt) — skill 仓库,MIT 协议
 - [bento/slides 格式规范](https://github.com/nyblnet/bento/blob/main/plugins/bento-slides/skills/bento-slides/format.md) — 上游 format spec,本指南的字段定义都来自这里
 - [bento/slides authoring guide](https://bento.page/agents.md) — "怎么写出好看的 deck" 的内容映射规则(chart/table/morph/state/ken-burns 的使用场景)
-- 本站 Zensical 笔记:[`docs/zensical/`](../../zensical/index.md) — 改 `zensical.toml` 时参考
+- 本站 Zensical 笔记:[`docs/zensical/`](../zensical/index.md)— 改 `zensical.toml` 时参考

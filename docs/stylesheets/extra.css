@@ -2,12 +2,16 @@
  * 全站字体覆盖
  *
  * 策略:
- *   - 字体 CSS 通过 @import 引入(等价于在 <head> 加 <link>)
- *   - Material 主题字体变量(--md-text-font / --md-heading-font /
- *     --md-code-font / --md-monospace-font)在 :root 上覆盖
+ *   - 直接 hardcode `body / h* / code / pre` 的 font-family,不走 CSS 变量
+ *     (原因:Zensical 主题在 head 里 inline 注入的是 `--md-text-font`(无
+ *     -family 后缀),而 main.min.css 实际消费的是 `--md-text-font-family`
+ *     (带 -family 后缀)——两个不同的变量。覆盖任意一个都没用。)
  *   - 中英文混排靠 font-family 的 fallback 链:
- *       英文优先 Inter(无中文字形,中文继续往下找)
- *       中文回退到 LXGW WenKai Screen(无英文字形,英文继续往上找)
+ *       中文优先 LXGW WenKai Screen(同时有中英文字形,中文好看)
+ *       英文优先 Inter(没中文字形,中文会回退到 LXGW)
+ *       系统字体最后兜底
+ *
+ * 灵感来源:https://wcowin.work/Zensical-Chinese-Tutorial/blog/advanced/custom-fonts/
  *
  * CDN 选择(默认国内访客):
  *   - 霞鹜文楷 → bootcdn(cdn.bootcdn.net)
@@ -24,46 +28,43 @@
 @import url("https://cdn.bootcdn.net/ajax/libs/lxgw-wenkai-screen-webfont/1.7.0/style.min.css");
 @import url("https://fonts.font.im/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap");
 
-/* ---------- 2. 字体变量覆盖 ----------
- * 这里的字体栈顺序很关键:
- *   1. Inter 先 — 浏览器看到 ASCII 字符用 Inter
- *   2. system-ui / -apple-system / Segoe UI — 各平台原生英文字体作为本地兜底
- *   3. LXGW WenKai Screen — 浏览器看到 CJK 字符时用它
+/* ---------- 2. 字体 hardcode(参考 wcowin 方案) ----------
+ * 不用 CSS 变量,直接给 body / h* / code 写 font-family。
+ * 主题 CSS 不会覆盖具体元素选择器(只覆盖 :root 上的变量)。
+ *
+ * 中英混排策略(关键!):
+ *   1. Inter 在前 — 浏览器看到 ASCII 字符用 Inter(英文字形)
+ *   2. system-ui / -apple-system / BlinkMacSystemFont / Segoe UI / Roboto
+ *      — 各平台原生英文字体作为本地兜底
+ *   3. LXGW WenKai Screen — 浏览器看到 CJK 字符时用霞鹜文楷
  *   4. sans-serif — 终极兜底
  */
-:root {
-  /* 正文 */
-  --md-text-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif,
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
     "LXGW WenKai Screen", "LXGW WenKai", "霞鹜文楷", sans-serif;
+  font-weight: normal;
+}
 
-  /* 粗体正文(部分 Material 子主题会用到) */
-  --md-text-font--bold: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif,
+/* 标题字体(继承 body,但显式声明以防主题有特殊处理) */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
     "LXGW WenKai Screen", "LXGW WenKai", "霞鹜文楷", sans-serif;
+  font-weight: 700;
+}
 
-  /* 斜体 */
-  --md-text-font--italic: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif,
-    "LXGW WenKai Screen", "LXGW WenKai", "霞鹜文楷", sans-serif;
+/* 代码块保持等宽,不混 LXGW */
+code, pre, kbd, samp {
+  font-family: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace !important;
+}
 
-  /* 小字(页脚/版权) */
-  --md-text-font--small: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif,
-    "LXGW WenKai Screen", "LXGW WenKai", "霞鹜文楷", sans-serif;
-
-  /* 标题 */
-  --md-heading-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif,
-    "LXGW WenKai Screen", "LXGW WenKai", "霞鹜文楷", sans-serif;
-
-  /* 代码(内联 + 代码块) */
-  --md-code-font: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas,
-    "Liberation Mono", monospace,
-    "LXGW WenKai Screen", "LXGW WenKai", "霞鹜文楷", monospace;
-
-  /* 等宽(扩展用途) */
-  --md-monospace-font: var(--md-code-font);
+/* 返回顶部按钮字体 */
+button.md-top {
+  font-family: "LXGW WenKai Screen", "LXGW WenKai", "霞鹜文楷", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 /* ===================================================================

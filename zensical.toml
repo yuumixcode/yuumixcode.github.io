@@ -50,12 +50,10 @@ nav = [
         "zensical/add-video.md",
         "zensical/custom-fonts.md",
     ] },
-    { "AI 工具" = [
-        "ai/voice-clone-tts-guide.md",
-    ] },
     { "AI" = [
         "ai/index.md",
         "ai/bento-presentation-guide.md",
+        "ai/voice-clone-tts-guide.md",
     ] },
 ]
 

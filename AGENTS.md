@@ -44,7 +44,7 @@
 | 首页 | `index.md` | 网站入口、介绍、导览 |
 | Aesir Packages | `aesir-architecture/`、`aesir-modules/`、`aesir-inspector/` | Aesir 系列三个包收纳到一个 Header 下,各包作为子分组 |
 | Odin Inspector | `odin-inspector/` | Odin Inspector 实战笔记 |
-| Unity 知识库 | `unity-knowledge-base/` | Unity 通用技术沉淀(按子主题分子目录) |
+| Unity | `unity-knowledge-base/` | Unity 通用技术沉淀(按子主题分子目录) |
 | Zensical | `zensical/` | 静态站工具本身的使用笔记 |
 | AI | `ai/` | AI skill / 工具集成笔记(如 qiaomu-bento-ppt) |
 
