@@ -52,8 +52,8 @@ nav = [
     ] },
     { "Zensical" = [
         "zensical/index.md",
-        "zensical/add-video.md",
-        "zensical/custom-fonts.md",
+        { "添加视频指南" = "zensical/add-video.md" },
+        { "自定义字体指南" = "zensical/custom-fonts.md" },
     ] },
     { "AI" = [
         "ai/index.md",
