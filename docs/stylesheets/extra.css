@@ -23,9 +23,10 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
 
-/* 代码块保持等宽(系统 monospace stack,不引外部字体) */
+/* 代码块用 JetBrains Mono(fontsource 字体由 font.im 反代加载,国内可用);
+   fallback 保留系统 monospace 兜底,防止 JetBrains Mono 加载不到时退化到 serif */
 code, pre, kbd, samp {
-  font-family: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+  font-family: "JetBrains Mono", ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
 }
 
 /* 返回顶部按钮 */
