@@ -30,7 +30,9 @@
 │   ├── unity-knowledge-base/
 │   │   ├── localization/
 │   │   └── addressables/
-│   └── zensical/
+│   ├── zensical/
+│   ├── ai/                # AI skill / 工具集成笔记
+│   └── presentations/     # bento 演示文稿资源(不进 nav,被 ai/ 页面 iframe 引用)
 ├── .venv/                 # Python 隔离环境(不入仓,运行时自动恢复)
 └── site/                  # 构建产物(不入仓,`zensical build --clean` 重建)
 ```
@@ -44,6 +46,7 @@
 | Odin Inspector | `odin-inspector/` | Odin Inspector 实战笔记 |
 | Unity 知识库 | `unity-knowledge-base/` | Unity 通用技术沉淀(按子主题分子目录) |
 | Zensical | `zensical/` | 静态站工具本身的使用笔记 |
+| AI | `ai/` | AI skill / 工具集成笔记(如 qiaomu-bento-ppt) |
 
 注:Aesir Packages 下面是三个平级子分组(Architecture / Modules / Inspector),不是再拆 header。
 
