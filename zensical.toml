@@ -48,6 +48,9 @@ nav = [
         "zensical/index.md",
         "zensical/add-video.md",
     ] },
+    { "AI 工具" = [
+        "ai/voice-clone-tts-guide.md",
+    ] },
 ]
 
 [project.theme]
