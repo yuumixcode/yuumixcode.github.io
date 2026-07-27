@@ -1,8 +1,8 @@
 # Zensical
 
-> [Zensical](https://zensical.org/) 是本站使用的静态站点生成器,基于 Python + MiniJinja,部署在 GitHub Pages。
+> [Zensical](https://zensical.org/) 是本站使用的静态站点生成器，**核心用 Rust 实现**（构建快），通过 **Python 包**发布（pip 安装方便），模板引擎是 **MiniJinja**（Rust 写的 Jinja2 兼容实现），部署在 GitHub Pages。
 >
-> 这里记录踩过的坑、最佳实践,以及所有「非默认行为」的说明。
+> 这里记录踩过的坑、最佳实践，以及所有「非默认行为」的说明。
 
 ## 索引
 
