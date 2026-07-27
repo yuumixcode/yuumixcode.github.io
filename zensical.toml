@@ -48,6 +48,10 @@ nav = [
         "zensical/index.md",
         "zensical/add-video.md",
     ] },
+    { "AI" = [
+        "ai/index.md",
+        "ai/bento-presentation-guide.md",
+    ] },
 ]
 
 [project.theme]

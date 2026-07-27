@@ -152,3 +152,42 @@
     font-size: 1.6rem;
   }
 }
+
+/* ===================================================================
+ * bento deck iframe 嵌入 — ai/bento-presentation-guide.md 配套样式
+ * 16:9 锁定,小屏不被压扁,bento 内部 viewer/editor 跑在 iframe 里
+ * =================================================================== */
+
+.bento-frame {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  margin: 1.5rem auto;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0a0a0a;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+}
+
+.bento-frame::before {
+  content: "";
+  display: block;
+  padding-top: 56.25%;   /* 16:9 */
+}
+
+.bento-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.bento-frame-caption {
+  margin: 0.75rem 0 0;
+  padding: 0 0.25rem;
+  font-size: 0.85rem;
+  color: var(--slides-muted, #737373);
+  text-align: center;
+}

@@ -11,6 +11,7 @@
   - [Slides 版（15 页 · 键盘翻页）](unity-knowledge-base/localization/slides/index.md)
   - [踩坑问答](unity-knowledge-base/localization/localization-question.md)
 - **[Addressables FAQ](unity-knowledge-base/addressables/addressable-faq.md)** — Addressables 实战问答
+- **[qiaomu-bento-ppt 使用指南](ai/bento-presentation-guide.md)** — 把单文件 bento 演示文稿通过 iframe 嵌进本站的完整做法 + 限制清单
 
 ---
 
