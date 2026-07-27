@@ -6,7 +6,10 @@ site_author = "yuumixcode"
 docs_dir = "docs"
 site_dir = "site"
 copyright = "Copyright &copy; 2026 yuumixcode"
-extra_css = ["stylesheets/extra.css"]
+extra_css = [
+    "stylesheets/extra.css",
+    "https://fontsapi.zeoseven.com/292/main/result.css",  # 霞鹜文楷 LXGW WenKai(zeoseven CDN,国内可用)
+]
 
 # 导航规范:Header 显示中文(品牌/工具名保留英文),内部页面按需展开
 nav = [
