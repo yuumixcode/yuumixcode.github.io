@@ -10,6 +10,7 @@ extra_css = [
     "stylesheets/extra.css",
     "https://fontsapi.zeoseven.com/292/main/result.css",  # 霞鹜文楷 LXGW WenKai(zeoseven CDN,中英文都用它)
     "https://fonts.font.im/css2?family=JetBrains+Mono:wght@400;500;700&display=swap",  # JetBrains Mono 代码字体(font.im 反代 Google Fonts,国内可用)
+    "https://fonts.font.im/css2?family=Press+Start+2P&family=VT323&display=swap",  # 像素字体(Press Start 2P 标题 + VT323 对白)
 ]
 
 # 导航规范:Header 显示中文(品牌/工具名保留英文),内部页面按需展开
@@ -65,6 +66,7 @@ nav = [
 [project.theme]
 variant = "modern"
 language = "zh"
+# custom_dir = "overrides"  # 首页内容已迁入 docs/index.md,模板覆盖已移除;如需其他 override 再启用
 favicon = "assets/images/avatar.png"  # favicon 用 GitHub 头像 PNG(从 https://github.com/yuumixcode.png 拉取,256×256)
 # logo 必须 .svg(主题模板在 .icons/<path>.svg 找矢量模板)
 # 如果你有头像的 SVG 源文件,把下面这行取消注释,文件放到 docs/assets/images/avatar.svg

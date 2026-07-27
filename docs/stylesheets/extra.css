@@ -229,3 +229,359 @@ button.md-top {
   color: var(--slides-muted, #737373);
   text-align: center;
 }
+
+/* ===================================================================
+ * Yuumix 主页 — 像素粒子 + 滑入对话 + RPG 风格对话框
+ * 数据驱动:对话文案在 docs/index.md 的 front matter 里改
+ * 模板在 overrides/main.html,样式在这里
+ *
+ * 配色(冷蓝头像主体 + 暖色碎片):
+ *   --yuumix-warm-bg    暖米白背景
+ *   --yuumix-cool-bg    冷蓝白卡片
+ *   --yuumix-ink        深蓝灰文字(代替纯黑)
+ *   --yuumix-orange     暖橙(强调/CTA)
+ *   --yuumix-cyan       符文青(品牌)
+ *   --yuumix-red        暖红
+ *   --yuumix-honey      蜂蜜黄
+ * =================================================================== */
+
+:root {
+  --yuumix-warm-bg:  #FAF3E0;
+  --yuumix-cool-bg:  #E8F1F8;
+  --yuumix-ink:      #1A2B4A;
+  --yuumix-orange:   #F4A261;
+  --yuumix-cyan:     #2A9D8F;
+  --yuumix-red:      #E76F51;
+  --yuumix-honey:    #E9C46A;
+}
+
+/* ---------- Section 通用 ---------- */
+.yuumix-section {
+  position: relative;
+  padding: 4rem 1.5rem;
+  margin: 0 auto;
+  max-width: 1100px;
+  overflow: hidden;
+}
+
+.yuumix-section--hero {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+  text-align: center;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg,
+    var(--yuumix-warm-bg) 0%,
+    #fff 100%);
+}
+
+.yuumix-section__body {
+  max-width: 720px;
+  margin: 1.5rem auto 0;
+}
+
+/* ---------- 像素粒子(头像里那些粉黄绿红碎片) ---------- */
+.pixel-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(4px 4px at 10% 20%, var(--yuumix-red),    transparent 60%),
+    radial-gradient(3px 3px at 80% 30%, var(--yuumix-honey),  transparent 60%),
+    radial-gradient(5px 5px at 30% 70%, var(--yuumix-cyan),   transparent 60%),
+    radial-gradient(3px 3px at 70% 80%, var(--yuumix-orange), transparent 60%),
+    radial-gradient(4px 4px at 50% 10%, var(--yuumix-red),    transparent 60%),
+    radial-gradient(3px 3px at 90% 60%, var(--yuumix-honey),  transparent 60%),
+    radial-gradient(4px 4px at 15% 85%, var(--yuumix-cyan),   transparent 60%),
+    radial-gradient(3px 3px at 60% 45%, var(--yuumix-orange), transparent 60%);
+  background-size: 200% 200%;
+  animation: float-particles 24s linear infinite;
+  opacity: 0.55;
+  z-index: 0;
+}
+
+@keyframes float-particles {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+/* 粒子层不影响文字点击 */
+.yuumix-section > *:not(.pixel-particles) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- 头像 ---------- */
+.yuumix-avatar {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  border: 4px solid var(--yuumix-ink);
+  box-shadow: 4px 4px 0 var(--yuumix-ink);
+}
+
+.yuumix-dialog--large .yuumix-avatar {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 1.5rem;
+}
+
+.yuumix-dialog--small .yuumix-avatar {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+/* ---------- 对话容器 ---------- */
+.yuumix-dialog {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin: 0 auto 2rem;
+  max-width: 560px;
+}
+
+.yuumix-dialog--center {
+  flex-direction: column;
+  align-items: center;
+}
+
+.yuumix-dialog--center .dialog-box::before {
+  display: none;
+}
+
+.yuumix-dialog--left {
+  justify-content: flex-start;
+}
+
+.yuumix-dialog--right {
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+}
+
+.yuumix-dialog--right .dialog-box::before {
+  left: auto;
+  right: -16px;
+  border-right-color: transparent;
+  border-left-color: var(--yuumix-ink);
+}
+
+.yuumix-dialog--bottom {
+  flex-direction: column;
+  align-items: center;
+}
+
+.yuumix-dialog--bottom .dialog-box::before {
+  display: none;
+}
+
+/* ---------- RPG 风格对话框 ---------- */
+.dialog-box {
+  background: #FFF8DC;
+  border: 4px solid var(--yuumix-ink);
+  border-radius: 4px;
+  padding: 14px 18px;
+  box-shadow: 4px 4px 0 var(--yuumix-ink);
+  position: relative;
+  font-family: "VT323", "LXGW WenKai", monospace;
+  font-size: 18px;
+  line-height: 1.5;
+  max-width: 380px;
+}
+
+.dialog-box::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 20px;
+  border: 8px solid transparent;
+  border-right-color: var(--yuumix-ink);
+}
+
+.dialog-box__name {
+  color: var(--yuumix-cyan);
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+.dialog-box__text {
+  margin: 0;
+  color: var(--yuumix-ink);
+}
+
+/* 语气配色(由 data-mood 控制) */
+[data-mood="chill"]    .dialog-box { background: var(--yuumix-cool-bg); }
+[data-mood="hype"]     .dialog-box { background: #FFE4D1; }
+[data-mood="friendly"] .dialog-box { background: #FFF4D1; }
+
+/* ---------- 滑入动画(滚动到视图时由 JS 加 .is-visible) ---------- */
+.yuumix-dialog {
+  opacity: 0;
+  transform: translateX(0);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.yuumix-dialog--left   { transform: translateX(-60px); }
+.yuumix-dialog--right  { transform: translateX(60px); }
+.yuumix-dialog--bottom { transform: translateY(60px); }
+
+.yuumix-section.is-visible .yuumix-dialog {
+  opacity: 1;
+  transform: translateX(0) translateY(0);
+}
+
+/* Hero 段不滑入(已经在视图里) */
+.yuumix-section--hero .yuumix-dialog {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- 像素标题 ---------- */
+.yuumix-title {
+  font-family: "Press Start 2P", "LXGW WenKai", monospace;
+  font-size: 2.5rem;
+  letter-spacing: 0.15em;
+  color: var(--yuumix-ink);
+  margin: 1.5rem 0 0.75rem;
+  text-shadow: 4px 4px 0 var(--yuumix-orange);
+  line-height: 1.4;
+}
+
+.yuumix-subtitle {
+  font-size: 1.05rem;
+  color: var(--yuumix-ink);
+  opacity: 0.75;
+  margin: 0 0 2rem;
+  letter-spacing: 0.05em;
+}
+
+/* ---------- CTA 按钮 ---------- */
+.yuumix-cta {
+  display: inline-block;
+  padding: 12px 28px;
+  background: var(--yuumix-orange);
+  color: var(--yuumix-ink);
+  border: 3px solid var(--yuumix-ink);
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 var(--yuumix-ink);
+  font-weight: bold;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  font-size: 1rem;
+}
+
+.yuumix-cta:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--yuumix-ink);
+}
+
+.yuumix-cta:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--yuumix-ink);
+}
+
+/* ---------- 滚动提示 ---------- */
+.yuumix-scroll-hint {
+  margin-top: 3rem;
+  font-size: 0.85rem;
+  color: var(--yuumix-ink);
+  opacity: 0.5;
+  animation: bounce 2s ease-in-out infinite;
+  letter-spacing: 0.1em;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(8px); }
+}
+
+/* ---------- Contact 链接 ---------- */
+.yuumix-contact-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.yuumix-contact-links li {
+  padding: 0.4rem 0;
+  font-size: 1.05rem;
+}
+
+.yuumix-contact-links a {
+  color: var(--yuumix-cyan);
+  text-decoration: none;
+  border-bottom: 2px dashed var(--yuumix-cyan);
+}
+
+.yuumix-contact-links a:hover {
+  background: var(--yuumix-honey);
+  border-bottom-style: solid;
+}
+
+/* ---------- Markdown 正文区 ---------- */
+.yuumix-section--content {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.yuumix-section--content .md-content {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ---------- 首页导览段居中(只作用于 index.md #intro-start 之后的文本) ---------- */
+/* 排除 .yuumix-section(hero/about/contact) 与 <script>,不影响其他区块 */
+.md-content > h1#intro-start ~ *:not(section):not(script) {
+  text-align: center;
+}
+
+/* 列表整体居中,但文字保持左对齐更易读 */
+.md-content > h1#intro-start ~ ul {
+  display: inline-block;
+  text-align: left;
+}
+
+/* ---------- 响应式(移动端) ---------- */
+@media (max-width: 600px) {
+  .yuumix-title {
+    font-size: 1.5rem;
+  }
+  .yuumix-subtitle {
+    font-size: 0.9rem;
+  }
+  .yuumix-dialog--large .yuumix-avatar {
+    width: 140px;
+    height: 140px;
+  }
+  .yuumix-dialog--small .yuumix-avatar {
+    width: 60px;
+    height: 60px;
+  }
+  .dialog-box {
+    font-size: 16px;
+    padding: 10px 14px;
+  }
+  .yuumix-section {
+    padding: 3rem 1rem;
+  }
+  .yuumix-section--hero {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    min-height: auto;
+  }
+  .yuumix-dialog--right,
+  .yuumix-dialog--left {
+    flex-direction: column;
+    align-items: center;
+  }
+  .yuumix-dialog--right .dialog-box::before,
+  .yuumix-dialog--left .dialog-box::before {
+    display: none;
+  }
+}
