@@ -44,7 +44,8 @@ nav = [
         { "Localization" = [
             "unity-knowledge-base/localization/unity-localization-pitfall-log.md",
             "unity-knowledge-base/localization/localization-question.md",
-            "unity-knowledge-base/localization/slides/index.md",
+            # 注:slides/ 是 HTML 资产(slides.html),不进 nav;
+            # 入口在 pitfall-log.md 顶部 "想看幻灯片版?" 那个 tip block,新窗口打开
         ] },
         { "Addressables" = "unity-knowledge-base/addressables/addressable-faq.md" },
     ] },
