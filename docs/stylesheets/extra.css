@@ -1,23 +1,32 @@
 /* ===================================================================
- * 字体覆盖(参考 Wcowin 教程 ziti.css 的极简方案)
+ * 字体覆盖(中英分离策略)
  *   https://wcowin.work/Zensical-Chinese-Tutorial/blog/advanced/custom-fonts/
  *
  * 思路:
- *   - 字体 CSS 不在 extra.css 里 @import,改在 zensical.toml 的 extra_css
- *     里直接列 URL(参考 Wcowin 自己的 ziti.css 用法)
- *   - body 简单覆盖 font-family,中英文统一用 LXGW WenKai
- *   - code/pre 强制等宽,不被 LXGW 影响
+ *   - body font-family 用 "Inter" 在前,LXGW WenKai 兜底
+ *     浏览器对每个字符按 font-family 列表逐个匹配:
+ *       英文 → Inter(ASCII 字形,无中文字形)
+ *       中文 → Inter 没有中文字形,回退到 LXGW WenKai(楷体中文字形)
+ *   - 字体源在 zensical.toml 的 extra_css 里:
+ *       LXGW WenKai → zeoseven CDN(国内)
+ *       Inter       → font.im(Google Fonts 国内反代)
  *
- * CDN:zeoseven(fontsapi.zeoseven.com) — 国内中文字体 CDN,稳定
- * 字体:霞鹜文楷 LXGW WenKai(Klee One 衍生,伪等宽 CJK,中英文统一楷体)
+ * 关键:code/pre 用系统 monospace stack,不引外部字体,
+ *      保证等宽不被 LXGW 楷体污染
  * =================================================================== */
 
 body {
-  font-family: "LXGW WenKai";
+  font-family: "Inter", "LXGW WenKai";
   font-weight: normal;
 }
 
-/* 代码块保持等宽 */
+/* 标题继承 body,自动享受中英分离 */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Inter", "LXGW WenKai";
+  font-weight: 600;
+}
+
+/* 代码块保持等宽(系统 monospace stack,不引外部字体) */
 code, pre, kbd, samp {
   font-family: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
 }
