@@ -44,12 +44,12 @@ nav = [
     ] },
     { "Unity" = [
         { "Localization" = [
-            "unity-knowledge-base/localization/unity-localization-pitfall-log.md",
-            "unity-knowledge-base/localization/localization-question.md",
-            # 注:slides/ 是 HTML 资产(slides.html),不进 nav;
+            "unity-knowledge/localization/unity-localization-pitfall-log.md",
+            "unity-knowledge/localization/localization-question.md",
+            # 注:slides/ 是 HTML 资产(unity-localization-pitfall-log-slides.html),不进 nav;
             # 入口在 pitfall-log.md 顶部 "想看幻灯片版?" 那个 tip block,新窗口打开
         ] },
-        { "Addressables" = "unity-knowledge-base/addressables/addressable-faq.md" },
+        { "Addressables" = "unity-knowledge/addressables/addressable-faq.md" },
     ] },
     { "Zensical" = [
         "zensical/index.md",
@@ -69,9 +69,9 @@ variant = "modern"
 language = "zh"
 # custom_dir = "overrides"  # 首页内容已迁入 docs/index.md,模板覆盖已移除;如需其他 override 再启用
 favicon = "assets/images/avatar.png"  # favicon 用 GitHub 头像 PNG(从 https://github.com/yuumixcode.png 拉取,256×256)
-# logo 必须 .svg(主题模板在 .icons/<path>.svg 找矢量模板)
-# 如果你有头像的 SVG 源文件,把下面这行取消注释,文件放到 docs/assets/images/avatar.svg
-# logo = "assets/images/avatar.svg"
+logo = "assets/images/avatar.svg"  # 站点左上角 logo 用 SVG(由 avatar.png 通过 tools/png_to_svg.py 转出,2D 矩形合并,矢量缩放无损)
+# 备注:主题对 logo 格式无硬性要求(走 <img src>),SVG 仅因为更轻 + 任意尺寸锐利
+# 暗色模式如需切换 logo,加 [project.theme.alternate] 即可
 features = [
     "navigation.instant",
     "navigation.tabs",

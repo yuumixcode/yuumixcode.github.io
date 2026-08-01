@@ -5,7 +5,7 @@
 ---
 
 !!! tip "想看幻灯片版?"
-    整理成了 15 页 slides，适合分享 / 投影。[👉 在新窗口打开](slides/slides.html){target="_blank" rel="noopener"}
+    整理成了 15 页 slides，适合分享 / 投影。[👉 在新窗口打开](slides/unity-localization-pitfall-log-slides.html){target="_blank" rel="noopener"}
 
 ## 一、禁止在 InitializationOperation 的 Completed 事件中调用 SetSelectedLocale
 

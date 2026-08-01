@@ -7,9 +7,9 @@
 | 维度 | 规则 | 示例 |
 | --- | --- | --- |
 | **导航显示** | 中文,品牌/工具名保留英文 | 首页 / Aesir Architecture / Unity 知识库 |
-| **目录名** | 全英文小写,多词用 `-` 连接 | `aesir-architecture/` `unity-knowledge-base/` |
+| **目录名** | 全英文小写,多词用 `-` 连接 | `aesir-architecture/` `unity-knowledge/` |
 | **文件名** | 全英文小写,多词用 `-` 连接 | `unity-localization-pitfall-log.md` `add-video.md` |
-| **路径** | 目录 + 文件名全程英文 `-` 风格 | `unity-knowledge-base/localization/unity-localization-pitfall-log.md` |
+| **路径** | 目录 + 文件名全程英文 `-` 风格 | `unity-knowledge/localization/unity-localization-pitfall-log.md` |
 
 **为什么分开**:目录/路径要稳定,URL/链接/脚本都依赖它;导航显示可以随语种调整。两者解耦后改语言或品牌名不会影响链接。
 
@@ -20,6 +20,7 @@
 ├── AGENTS.md              # 本规范
 ├── README.md              # 项目说明(给人类)
 ├── zensical.toml          # Zensical 配置(导航/主题/特性)
+├── tools/                 # 仓库级脚本(不进 docs/,不被 zensical 打包进 site/)
 ├── docs/                  # Markdown 源(所有内容从这里出发)
 │   ├── index.md           # 首页
 │   ├── stylesheets/       # 自定义 CSS
@@ -27,7 +28,7 @@
 │   ├── aesir-modules/
 │   ├── aesir-inspector/
 │   ├── odin-inspector/
-│   ├── unity-knowledge-base/
+│   ├── unity-knowledge/
 │   │   ├── localization/
 │   │   └── addressables/
 │   ├── zensical/
@@ -44,7 +45,7 @@
 | 首页 | `index.md` | 网站入口、介绍、导览 |
 | Aesir Packages | `aesir-architecture/`、`aesir-modules/`、`aesir-inspector/` | Aesir 系列三个包收纳到一个 Header 下,各包作为子分组 |
 | Odin Inspector | `odin-inspector/` | Odin Inspector 实战笔记 |
-| Unity | `unity-knowledge-base/` | Unity 通用技术沉淀(按子主题分子目录) |
+| Unity | `unity-knowledge/` | Unity 通用技术沉淀(按子主题分子目录) |
 | Zensical | `zensical/` | 静态站工具本身的使用笔记 |
 | AI | `ai/` | AI skill / 工具集成笔记(如 qiaomu-bento-ppt) |
 
@@ -58,7 +59,7 @@ Unity 知识库是**按子主题**分子目录的「主题文件夹」,不是单
 
 - 每个 Unity 子主题 = 一个子目录,目录名英文 `-` 风格
 - 子目录下放 `index.md` + 若干专题 `.md`
-- 例:`unity-knowledge-base/localization/` 下放 `unity-localization-pitfall-log.md` `localization-question.md` `slides/`
+- 例:`unity-knowledge/localization/` 下放 `unity-localization-pitfall-log.md` `localization-question.md` `slides/`
 
 ## 3. 导航(nav)约定
 
@@ -75,7 +76,7 @@ Unity 知识库是**按子主题**分子目录的「主题文件夹」,不是单
 跨页面跳转用相对 `.md` 路径,zensical 会在 build 时自动 resolve。例如:
 
 ```markdown
-详见 [踩坑日志](unity-knowledge-base/localization/unity-localization-pitfall-log.md)
+详见 [踩坑日志](unity-knowledge/localization/unity-localization-pitfall-log.md)
 ```
 
 不要用绝对 URL(部署后会被 CDN 重写,本地开发又失效)。
