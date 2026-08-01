@@ -34,7 +34,7 @@
 │   ├── ai/                # AI skill / 工具集成笔记
 │   └── presentations/     # bento 演示文稿资源(不进 nav,被 ai/ 页面 iframe 引用)
 ├── others/                # 非 zensical 资源收纳(不进 build,不入 zensical 范围)
-│   ├── ai-skills/         # AI skill 源文件副本(从 ~/.minimax/.builtin-skills/ 复制,方便参照)
+│   ├── ai-skills/         # yuumix 觉得不错的 skill 存档(便于以后查找使用,入仓保留,不要加进 .gitignore)
 │   ├── tools/             # 仓库级脚本(不进 docs/,不被 zensical 打包进 site/)
 │   └── yuumix-ip/         # 个人 IP / 头像产物(personal-ip-generator 输出:多版本 final/preview + 脚本 + 参考图)
 ├── .venv/                 # Python 隔离环境(不入仓,运行时自动恢复)
