@@ -1,6 +1,6 @@
 # Localization 踩坑日志
 
-> Unity 2022.3.62f3 | Localization 1.5.3 | Addressables 1.22.3
+> Unity 2022.3.62f3c1 | Localization 1.5.3 | Addressables 1.22.3
 
 ---
 
