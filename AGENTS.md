@@ -20,7 +20,6 @@
 ├── AGENTS.md              # 本规范
 ├── README.md              # 项目说明(给人类)
 ├── zensical.toml          # Zensical 配置(导航/主题/特性)
-├── tools/                 # 仓库级脚本(不进 docs/,不被 zensical 打包进 site/)
 ├── docs/                  # Markdown 源(所有内容从这里出发)
 │   ├── index.md           # 首页
 │   ├── stylesheets/       # 自定义 CSS
@@ -34,9 +33,15 @@
 │   ├── zensical/
 │   ├── ai/                # AI skill / 工具集成笔记
 │   └── presentations/     # bento 演示文稿资源(不进 nav,被 ai/ 页面 iframe 引用)
+├── others/                # 非 zensical 资源收纳(不进 build,不入 zensical 范围)
+│   ├── ai-skills/         # AI skill 源文件副本(从 ~/.minimax/.builtin-skills/ 复制,方便参照)
+│   ├── tools/             # 仓库级脚本(不进 docs/,不被 zensical 打包进 site/)
+│   └── yuumix-ip/         # 个人 IP / 头像产物(personal-ip-generator 输出:多版本 final/preview + 脚本 + 参考图)
 ├── .venv/                 # Python 隔离环境(不入仓,运行时自动恢复)
 └── site/                  # 构建产物(不入仓,`zensical build --clean` 重建)
 ```
+
+> **根目录铁律**:除 `docs/` / `overrides/` / `site/` / `zensical.toml` 等 zensical 必需项,以及标准项目基础设施(`.git/` `.github/` `.gitignore` `.vscode/` `.cache/` `.venv/`),其他临时/个人/AI 资源一律进 `others/`,再按主题分子目录。`docs/` 是 zensical 的源,`others/` 是 zensical 之外的东西,**两者不要混**。
 
 ### 2.1 顶级 Header(6 个,固定)
 
