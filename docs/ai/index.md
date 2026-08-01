@@ -5,6 +5,8 @@
 ## 已有条目
 
 - **[qiaomu-bento-ppt 使用指南](bento-presentation-guide.md)** — 把 bento 单文件演示文稿通过 iframe 嵌进 Zensical 站点的完整做法 + 限制清单
+- **[personal-ip-generator 使用指南](personal-ip-generator-guide.md)** — Codex skill 跑个人 IP 头像 + 表情包 7 步向导,5 种预设画风 + 可选透明贴纸
+- **[语音克隆 TTS 方案指南](voice-clone-tts-guide.md)** — 克隆自己声音的免费/付费方案对比 + MiniMax Token Plan 调用示例
 
 ## 收录原则
 

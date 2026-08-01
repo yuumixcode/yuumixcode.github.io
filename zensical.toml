@@ -59,6 +59,7 @@ nav = [
     { "AI" = [
         "ai/index.md",
         "ai/bento-presentation-guide.md",
+        "ai/personal-ip-generator-guide.md",
         "ai/voice-clone-tts-guide.md",
     ] },
 ]
