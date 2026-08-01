@@ -48,7 +48,7 @@ hide:
 
 - **[Aesir Architecture](aesir-architecture/index.md)** — Unity 渐进式 MVP 架构框架,PlayerLoop 原生,MIT 协议
 - **[Aesir Inspector](aesir-inspector/index.md)** — Unity 编辑器扩展:双语 Inspector / 文档生成器 / 安全工具集
-- **[Odin Inspector 实战](odin-inspector/getting-started.md)** — 7 篇从入门到坑点的实战指南
+- **[Odin Inspector 实战](odin-inspector/odin-getting-started.md)** — 7 篇从入门到坑点的实战指南
 - **[Unity Localization 踩坑日志](unity-knowledge/localization/unity-localization-pitfall-log.md)** — 3 个真实坑 · Mermaid 序列图 + C# 修复方案
   - [踩坑问答](unity-knowledge/localization/localization-question.md)
 - **[Addressables FAQ](unity-knowledge/addressables/addressable-faq.md)** — Addressables 实战问答
