@@ -1,3 +1,5 @@
+![Localization 踩坑日志封面](../assets/covers/cover-localization-pitfall-log.png)
+
 # Localization 踩坑日志
 
 > Unity 2022.3.62f3c1 | Localization 1.5.3 | Addressables 1.22.3
