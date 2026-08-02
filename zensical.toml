@@ -44,7 +44,7 @@ nav = [
     ] },
     { "Unity" = [
         {"杂项" = [
-            "docs/unity-knowledge/misc/mac-and-windows-git-collaboration-unity.md",
+            "unity-knowledge/misc/mac-and-windows-git-collaboration-unity.md",
         ]},
         { "Localization" = [
             "unity-knowledge/localization/unity-localization-pitfall-log.md",
