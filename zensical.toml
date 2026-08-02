@@ -43,11 +43,12 @@ nav = [
         "odin-inspector/pitfalls.md",
     ] },
     { "Unity" = [
+        {"杂项" = [
+            "docs/unity-knowledge/misc/mac-and-windows-git-collaboration-unity.md",
+        ]},
         { "Localization" = [
             "unity-knowledge/localization/unity-localization-pitfall-log.md",
             "unity-knowledge/localization/localization-question.md",
-            # 注:slides/ 是 HTML 资产(slides.html),不进 nav;
-            # 入口在 pitfall-log.md 顶部 "想看幻灯片版?" 那个 tip block,新窗口打开
         ] },
         { "Addressables" = "unity-knowledge/addressables/addressable-faq.md" },
     ] },
