@@ -1,0 +1,27 @@
+# `ICanInitialize`
+
+## 介绍
+
+- 种类: `interface`
+- 所在程序集: `Runestone.AesirArchitecture`
+- 所在命名空间: `Runestone.AesirArchitecture`
+
+``` csharp
+public interface ICanInitialize : System.IDisposable
+```
+
+### 注释
+
+- 可初始化接口。提供初始化与初始化状态标记。 被 IModel 和 IService 继承。
+
+## 属性
+
+### 声明的属性
+
+| 属性签名 | 注释 |
+| :--- | :--- |
+| `public bool Initialized { get; }` |  |
+
+## Additional Notes
+
+> 首个 `## Additional Notes` 是增量生成文档标识符，请勿修改标题级别和内容！本文档由 [`Aesir Inspector`](https://github.com/yuumixcode/Unity-Aesir-Packages) 辅助生成。
