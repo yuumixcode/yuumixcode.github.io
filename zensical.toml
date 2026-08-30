@@ -48,10 +48,10 @@ nav = [
             "unity-knowledge/misc/ssh-publickey-auth-failure-debug.md",
         ]},
         { "Localization" = [
-            "unity-knowledge/localization/unity-localization-pitfall-log.md",
-            "unity-knowledge/localization/localization-question.md",
+            "unity-knowledge/unity-packages/localization/unity-localization-pitfall-log.md",
+            "unity-knowledge/unity-packages/localization/localization-question.md",
         ] },
-        { "Addressables" = "unity-knowledge/addressables/addressable-faq.md" },
+        { "Addressables" = "unity-knowledge/unity-packages/addressables/addressable-faq.md" },
     ] },
     { "Zensical" = [
         "zensical/index.md",
