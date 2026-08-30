@@ -41,6 +41,7 @@ nav = [
         "odin-inspector/editor-window.md",
         "odin-inspector/cases.md",
         "odin-inspector/pitfalls.md",
+        "odin-inspector/nested-prefabs.md",
     ] },
     { "Unity" = [
         {"杂项" = [
