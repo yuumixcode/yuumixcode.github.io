@@ -57,3 +57,11 @@ tmp
 
 # Lychee link checker
 .lycheecache
+
+# -----------------------------------------------------------------------------
+# codely-cli(本地 CLI 工具,只入仓 skills,配置/settings 不入仓)
+# -----------------------------------------------------------------------------
+# 忽略 .codely-cli 下所有内容,再放行 skills 子目录
+.codely-cli/*
+!.codely-cli/skills/
+!.codely-cli/skills/**
