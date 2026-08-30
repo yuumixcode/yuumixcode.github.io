@@ -52,6 +52,9 @@ nav = [
             "unity-knowledge/unity-packages/localization/localization-question.md",
         ] },
         { "Addressables" = "unity-knowledge/unity-packages/addressables/addressable-faq.md" },
+        { "Plugins" = [
+            "unity-knowledge/plugins/feel/feel-rotation-spring-tutorial.md",
+        ] },
     ] },
     { "Zensical" = [
         "zensical/index.md",
