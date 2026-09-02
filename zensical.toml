@@ -53,6 +53,10 @@ nav = [
             "unity-knowledge/unity-packages/localization/localization-question.md",
         ] },
         { "Addressables" = "unity-knowledge/unity-packages/addressables/addressable-faq.md" },
+        { "Dependency Injection" = [
+            "unity-knowledge/dependency-injection/index.md",
+            "unity-knowledge/dependency-injection/reflex-video-note.md",
+        ] },
         { "Plugins" = [
             "unity-knowledge/plugins/feel/feel-rotation-spring-tutorial.md",
         ] },
