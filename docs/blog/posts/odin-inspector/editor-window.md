@@ -1,10 +1,22 @@
-# 编辑器窗口
+---
+date: 2026-07-08
+slug: odin-editor-window
+authors:
+  - yuumixcode
+categories:
+  - Odin Inspector
+description: OdinEditorWindow 的正确打开方式：为什么不重写 OnGUI、绘制优先级顺序，以及 base 调用的必要性。
+---
+
+# Odin Inspector 编辑器窗口
 
 ## OdinEditorWindow
 
 - **不要重写 `OnGUI`**；注入 GUI 请重写 `DrawEditors` 或用 `[OnInspectorGUI]` 特性。
 - 必须重写 `OnGUI` 时务必 `base.OnGUI()`，否则只剩普通 EditorWindow。
 - Odin **默认开启 ScrollView**。
+
+<!-- more -->
 
 ### 绘制优先级顺序
 

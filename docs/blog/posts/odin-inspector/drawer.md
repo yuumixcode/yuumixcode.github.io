@@ -1,8 +1,20 @@
-# 自定义 Drawer
+---
+date: 2026-07-08
+slug: odin-custom-drawer
+authors:
+  - yuumixcode
+categories:
+  - Odin Inspector
+description: 自定义 Drawer 入门：OdinValueDrawer 泛型约束的继承传递性、DrawPropertyLayout 绘制链与 CallNextDrawer 的时机。
+---
+
+# Odin Inspector 自定义 Drawer
 
 ## 基础概念
 
 继承 `OdinValueDrawer<T>`，T 为要绘制的字段类型；可借**泛型约束**获得继承传递性。
+
+<!-- more -->
 
 ```csharp
 // 具体类 → 不绘制子类；泛型约束 where T : Weapon → 满足约束即绘制，且具传递性

@@ -1,9 +1,21 @@
-# 序列化系统
+---
+date: 2026-07-08
+slug: odin-serialization
+authors:
+  - yuumixcode
+categories:
+  - Odin Inspector
+description: Odin 序列化的核心原则（扩展而非覆盖）、SerializedMonoBehaviour 系列基类、字段序列化方式，以及「直接继承才生效」等关键限制。
+---
+
+# Odin Inspector 序列化系统
 
 ## 核心原则
 
 Odin **不覆盖** Unity 序列化，只是**扩展**它；一个类可同时拥有 Unity 与 Odin 序列化字段。
 > Odin 强大的序列化**只有在直接实现时**才生效。
+
+<!-- more -->
 
 ## SerializedMonoBehaviour 系列（直接继承即开启 Odin 序列化）
 

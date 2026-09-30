@@ -1,8 +1,20 @@
-# Attributes 特性
+---
+date: 2026-07-08
+slug: odin-attributes
+authors:
+  - yuumixcode
+categories:
+  - Odin Inspector
+description: Odin Inspector 常用 Attributes 速查：ShowInInspector、ShowDrawerChain 等特性的行为差异与使用场景。
+---
+
+# Odin Inspector Attributes 特性
 
 ## ShowInInspector — 调试用，不序列化
 
 仅显示，不写入文件；编辑态改的值**不影响 Play 模式**；运行时实时刷新值，适合调试。
+
+<!-- more -->
 
 ```csharp
 [ShowInInspector] int _test = 1;   // 编辑态改 111，运行时仍 = 1

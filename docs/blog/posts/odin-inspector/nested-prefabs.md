@@ -1,6 +1,18 @@
-# 嵌套 Prefab 已知限制
+---
+date: 2026-08-30
+slug: odin-nested-prefabs
+authors:
+  - yuumixcode
+categories:
+  - Odin Inspector
+description: Odin 官方关于嵌套 Prefab 支持现状的说明：Odin 序列化在嵌套 Prefab 下仅支持单层覆盖，完整支持时间表不确定。
+---
+
+# Odin 序列化与嵌套 Prefab 的已知限制
 
 > Odin 官方关于嵌套 Prefab 支持现状的说明。核心结论:**Odin 序列化在嵌套 Prefab 场景下仅支持单层覆盖**;完整支持是长期未决项目,时间表不确定,甚至可能无法落地。
+
+<!-- more -->
 
 ## 原文(英文)
 

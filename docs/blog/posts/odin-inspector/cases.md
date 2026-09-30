@@ -1,8 +1,20 @@
-# 实战案例
+---
+date: 2026-07-08
+slug: odin-practical-cases
+authors:
+  - yuumixcode
+categories:
+  - Odin Inspector
+description: 两个实战案例：可序列化的接口引用 OdinInterfaceReference（拖拽 + 验证），以及多语言按钮的实时切换实现。
+---
+
+# Odin Inspector 实战案例
 
 ## 案例一：OdinInterfaceReference（序列化接口引用）
 
 设计：自定义 `OdinInterfaceReference<TInterface, TObject>` 存「实现特定接口的对象」；自定义 Drawer 支持拖拽选择 + 验证圆点；`[OdinRequiredInterface]` 限定类型。
+
+<!-- more -->
 
 ```csharp
 [Serializable]

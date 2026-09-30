@@ -1,4 +1,18 @@
-# 坑点速查
+---
+date: 2026-07-08
+slug: odin-pitfalls
+authors:
+  - yuumixcode
+categories:
+  - Odin Inspector
+description: Odin Inspector 八大高频坑点速查与自查清单：Editor 接管、序列化传递性、label 为 null、双重序列化等。
+---
+
+# Odin Inspector 坑点速查
+
+> 使用 Odin Inspector 过程中真实踩过的坑，每条附解决方案；文末附提交前自查清单。
+
+<!-- more -->
 
 ## 八大坑点
 

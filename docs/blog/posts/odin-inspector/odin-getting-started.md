@@ -1,3 +1,13 @@
+---
+date: 2026-08-01
+slug: odin-getting-started
+authors:
+  - yuumixcode
+categories:
+  - Odin Inspector
+description: Odin Inspector 三大核心能力（Attribute、序列化扩展、Drawer 系统）、五种许可证的获取方式与价格对比，以及上手前需要了解的 IMGUI 基础。
+---
+
 # Odin Inspector 入门与许可证
 
 Odin Inspector and Serializer 是 Sirenix 开发的 Unity 编辑器扩展插件，三大核心能力：
@@ -5,6 +15,8 @@ Odin Inspector and Serializer 是 Sirenix 开发的 Unity 编辑器扩展插件�
 - 提供 100+ **特性（Attribute）**快速增强 Inspector 面板显示。
 - **扩展 Unity 原生序列化**，支持字典、委托等原生不支持的类型，由开源项目 Odin Serializer 提供。
 - 提供一整套**自定义 Drawer 系统**，深度定制编辑器 GUI，功能非常强大。
+
+<!-- more -->
 
 ## 许可证说明
 
