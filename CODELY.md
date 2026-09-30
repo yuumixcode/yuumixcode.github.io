@@ -5,7 +5,7 @@ Yuumix Code 个人网站 — 基于 [Zensical](https://zensical.org/) 静态站�
 ## 项目概述
 
 - **站点名**：歪歪空间（yuumixcode.github.io）
-- **定位**：Unity 插件作者的个人知识库，收录 Aesir 架构、Odin Inspector、Unity 技术笔记、Scripting API 文档、AI 工具笔记等
+- **定位**：Unity 插件作者的个人知识库，收录 Aesir Inspector、Unity 技术笔记、博客（含 Odin Inspector 系列）、AI 工具笔记等；Aesir Architecture / Modules 文档与 Scripting API 已迁至独立站点/仓库
 - **技术栈**：Python 3.13 + Zensical（Material for MkDocs 团队打造的新一代 SSG）+ Markdown 内容 + GitHub Pages 部署
 - **作者**：yuumixcode（Runestone / 符文石）
 
@@ -17,12 +17,9 @@ Yuumix Code 个人网站 — 基于 [Zensical](https://zensical.org/) 静态站�
 │   ├── index.md           # 自定义首页（像素风 + 对话框动效，非普通文档）
 │   ├── stylesheets/       # 自定义 CSS (extra.css)
 │   ├── assets/            # 图片资源（avatar.png/svg 等）
-│   ├── aesir-architecture/  # Aesir Architecture 包文档
-│   ├── aesir-modules/       # Aesir Modules 包文档
-│   ├── aesir-inspector/     # Aesir Inspector 包文档
-│   ├── odin-inspector/      # Odin Inspector 实战笔记
+│   ├── aesir-inspector/     # Aesir Inspector 包文档（Architecture/Modules 已迁至 yuumixcode.github.io/AesirFramework-Docs/）
 │   ├── unity-knowledge/     # Unity 通用技术沉淀（按子主题分子目录）
-│   ├── scripting-api/       # 自动生成的 Scripting API 文档
+│   ├── blog/                # 博客(Zensical 0.0.65+ 内置 Blog 插件;入口 index.md + .authors.yml + posts/,Odin 系列在 posts/odin-inspector/)
 │   ├── zensical/            # Zensical 工具使用笔记
 │   └── ai/                  # AI skill / 工具集成笔记
 ├── others/                # 非 Zensical 资源（不进 build，不入 zensical 范围）
@@ -106,3 +103,16 @@ zensical --version
 ## 不入仓
 
 `.gitignore` 已覆盖：`.venv/`、`site/`、`.cache/`、`.DS_Store`、`__pycache__/`、`*.log`、`trace.json` 等。不要提交 `site/`（build 产物）、`.venv/`（本地环境）或二进制音频资源。
+
+## Codely Structured Memories
+
+### User
+
+### Feedback
+
+### Project
+- [2026-09-30 23:38:44] [2026-09-30] 站点新增顶级导航「博客」(docs/blog/,Zensical 0.0.65+ 内置 Blog 插件,`[project.plugins.blog]`;nav 只写入口 `{ "博客" = ["blog/index.md"] }`)。坑:博客日期默认**不按站点语言本地化**(language="zh" 也输出 September 30, 2026 / Wednesday),且 `post_date_format` 用的是 **ICU 模式语法而非 strftime**——`%Y-%m-%d` 会被逐字母替换成 `%Y-%0-%30`;正确写法 `y年M月d日`→2026年9月30日(字母映射:a=AM/PM、y=年、M=月、d=日、H=24时、h=12时、m=分、s=秒、E=星期)。文章文件名/slug 必须英文(默认 slug 取标题,中文标题会生成中文 URL)。AGENTS.md 已同步(§2.1 顶级 Header 7 个、新增 §2.3 博客约定)。
+- [2026-10-01 00:01:40] [2026-10-01] 站点文档大梳理：①docs/scripting-api/ 已删除（Scripting API 迁到独立仓库），nav 整块移除；②docs/aesir-architecture/ 与 docs/aesir-modules/ 已删除，文档迁至 https://yuumixcode.github.io/AesirFramework-Docs/ ，nav 的「Aesir Packages」下仅留一个指向该站的外链钩子 + 本地 aesir-inspector/（保留）；③docs/odin-inspector/ 8 篇文档迁入 docs/blog/posts/odin-inspector/（带 front matter：date 取 git 首次提交日期、slug 英文、categories=[Odin Inspector]、<!-- more --> 摘要），「Odin Inspector」顶级 nav 已移除；④blog/index.md 新增「Unity 中文社区」分区说明区块（Odin 系列即该专栏内容）。顶级 Header 从 7 个变 6 个：首页/博客/Aesir Packages/Unity/Zensical/AI。Zensical nav 支持直接写 https:// 外链（0.0.67 实测构建通过）。AGENTS.md 已同步。
+
+### Reference
+
