@@ -9,7 +9,7 @@
 | **导航显示** | 中文,品牌/工具名保留英文 | 首页 / Aesir Architecture / Unity 知识库 |
 | **目录名** | 全英文小写,多词用 `-` 连接 | `aesir-architecture/` `unity-knowledge/` |
 | **文件名** | 全英文小写,多词用 `-` 连接 | `unity-localization-pitfall-log.md` `add-video.md` |
-| **路径** | 目录 + 文件名全程英文 `-` 风格 | `unity-knowledge/localization/unity-localization-pitfall-log.md` |
+| **路径** | 目录 + 文件名全程英文 `-` 风格 | `unity-knowledge/unity-packages/localization/unity-localization-pitfall-log.md` |
 
 **为什么分开**:目录/路径要稳定,URL/链接/脚本都依赖它;导航显示可以随语种调整。两者解耦后改语言或品牌名不会影响链接。
 
@@ -23,16 +23,20 @@
 ├── docs/                  # Markdown 源(所有内容从这里出发)
 │   ├── index.md           # 首页
 │   ├── stylesheets/       # 自定义 CSS
+│   ├── assets/            # 全站图片资源(avatar.png/svg 等)
 │   ├── aesir-inspector/
 │   ├── unity-knowledge/
-│   │   ├── localization/
-│   │   └── addressables/
+│   │   ├── misc/              # 杂项(Git 协作 / SSH 排查等)
+│   │   ├── unity-packages/    # Unity 官方包主题(localization/ addressables/)
+│   │   ├── dependency-injection/
+│   │   ├── scene-management/
+│   │   └── plugins/           # 第三方插件笔记(feel/)
 │   ├── zensical/
 │   ├── ai/                # AI skill / 工具集成笔记
-│   ├── blog/              # 博客(Zensical 内置 Blog 插件;文章源在 blog/posts/,Odin 系列在 posts/odin-inspector/)
-│   └── presentations/     # bento 演示文稿资源(不进 nav,被 ai/ 页面 iframe 引用)
+│   └── blog/              # 博客(Zensical 内置 Blog 插件;文章源在 blog/posts/,Odin 系列在 posts/odin-inspector/)
 ├── others/                # 非 zensical 资源收纳(不进 build,不入 zensical 范围)
 │   ├── ai-skills/         # yuumix 觉得不错的 skill 存档(便于以后查找使用,入仓保留,不要加进 .gitignore)
+│   ├── deploy-notes/      # 部署相关笔记(Cloudflare Pages 等)
 │   ├── tools/             # 仓库级脚本(不进 docs/,不被 zensical 打包进 site/)
 │   ├── video-scripts/     # 视频录制逐字稿(不进 docs/,不进 build,不入 zensical 范围)
 │   └── yuumix-ip/         # 个人 IP / 头像产物(personal-ip-generator 输出:多版本 final/preview + 脚本 + 参考图)
@@ -48,7 +52,7 @@
 | --- | --- | --- |
 | 首页 | `index.md` | 网站入口、介绍、导览 |
 | 博客 | `blog/` | Zensical 内置 Blog 插件生成的博文(长文 / 社区分享,含 Odin Inspector 系列) |
-| Aesir Packages | `aesir-inspector/` + 外链 | Aesir Inspector 本地文档;Architecture / Modules 已迁至 [AesirFramework-Docs](https://yuumixcode.github.io/AesirFramework-Docs/),nav 仅留外链钩子 |
+| Aesir Packages | `aesir-inspector/` + 外链 | Aesir Inspector 本地文档;Architecture / Modules 已迁至 [AesirFramework-Site](https://yuumixcode.github.io/AesirFramework-Site/),nav 仅留外链钩子 |
 | Unity | `unity-knowledge/` | Unity 通用技术沉淀(按子主题分子目录) |
 | Zensical | `zensical/` | 静态站工具本身的使用笔记 |
 | AI | `ai/` | AI skill / 工具集成笔记(如 qiaomu-bento-ppt) |
@@ -63,7 +67,7 @@ Unity 知识库是**按子主题**分子目录的「主题文件夹」,不是单
 
 - 每个 Unity 子主题 = 一个子目录,目录名英文 `-` 风格
 - 子目录下放 `index.md` + 若干专题 `.md`
-- 例:`unity-knowledge/localization/` 下放 `unity-localization-pitfall-log.md` `localization-question.md` `slides/`
+- 例:`unity-knowledge/unity-packages/localization/` 下放 `unity-localization-pitfall-log.md` `localization-question.md` `slides/`
 
 ### 2.3 博客(Blog 插件)约定
 
@@ -100,7 +104,7 @@ docs/blog/
 跨页面跳转用相对 `.md` 路径,zensical 会在 build 时自动 resolve。例如:
 
 ```markdown
-详见 [踩坑日志](unity-knowledge/localization/unity-localization-pitfall-log.md)
+详见 [踩坑日志](unity-knowledge/unity-packages/localization/unity-localization-pitfall-log.md)
 ```
 
 不要用绝对 URL(部署后会被 CDN 重写,本地开发又失效)。

@@ -19,7 +19,7 @@ nav = [
     { "博客" = ["blog/index.md"] },
     { "Aesir Packages" = [
         # Aesir Architecture / Aesir Modules 文档已迁移至独立文档站,nav 仅留外链钩子
-        { "Aesir Framework 文档站" = "https://yuumixcode.github.io/AesirFramework-Docs/" },
+        { "Aesir Framework 文档站" = "https://yuumixcode.github.io/AesirFramework-Site/" },
         { "Aesir Inspector" = [
             "aesir-inspector/index.md",
             "aesir-inspector/bilingual-odin.md",
@@ -37,12 +37,16 @@ nav = [
         { "Localization" = [
             "unity-knowledge/unity-packages/localization/unity-localization-pitfall-log.md",
             "unity-knowledge/unity-packages/localization/localization-question.md",
+            "unity-knowledge/unity-packages/localization/slides/index.md",
         ] },
         { "Addressables" = "unity-knowledge/unity-packages/addressables/addressable-faq.md" },
         { "Dependency Injection" = [
             "unity-knowledge/dependency-injection/index.md",
             "unity-knowledge/dependency-injection/reflex-video-note.md",
             "unity-knowledge/dependency-injection/usyrup-repo-note.md",
+        ] },
+        { "Scene Management" = [
+            "unity-knowledge/scene-management/scene-management-strategies.md",
         ] },
         { "Plugins" = [
             "unity-knowledge/plugins/feel/feel-rotation-spring-tutorial.md",
@@ -56,6 +60,7 @@ nav = [
     { "AI" = [
         "ai/index.md",
         "ai/bento-presentation-guide.md",
+        "ai/doc-to-deck-and-video-workflows.md",
         "ai/personal-ip-generator-guide.md",
         "ai/voice-clone-tts-guide.md",
     ] },

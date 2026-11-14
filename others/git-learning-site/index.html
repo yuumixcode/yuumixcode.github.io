@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git 第一次不慌 · 写给初学者的协作实战课</title>
+<meta name="description" content="面向 Git 初学者的交互式教程：commit / push / pull / fetch / rebase 到底做了什么，本地和远端怎么跑，两个人同时开发一个项目会发生什么，以及文件被覆盖时该怎么办。">
+<meta property="og:title" content="Git 第一次不慌 · 写给初学者的协作实战课">
+<meta property="og:description" content="两个开发者、六个真实场景、可点可看的 Git 协作动画。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ================= NAV ================= -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="6" cy="5" r="2.4"/><circle cx="6" cy="19" r="2.4"/><circle cx="18" cy="12" r="2.4"/>
+          <path d="M6 7.4v9.2"/><path d="M18 9.6c0 2.6-3 2.6-6 2.6"/>
+        </svg>
+      </span>
+      <span class="brand-text">Git 第一次不慌</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#basics">基础</a>
+      <a href="#branches">分支</a>
+      <a href="#sim">协作模拟器</a>
+      <a href="#conflict">冲突</a>
+      <a href="#rules">协作铁律</a>
+      <a href="#cheatsheet">速查表</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="展开菜单" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow reveal">交互式教程 · 无需安装 · 点一下走一步</div>
+    <h1 class="reveal d1">
+      Git 第一次，<br>
+      <span class="serif-italic">不用</span>慌。
+    </h1>
+    <p class="lede reveal d2">
+      这不是又一篇命令清单。我们把 <code>commit</code>、<code>push</code>、<code>pull</code>、<code>fetch</code>、<code>rebase</code>
+      拆成看得见的动画，再让两个开发者 A 和 B 面对面地演示一遍：从"我该先提交还是先拉取"，到"这行代码到底该听谁的"。
+      全程你只需要点按钮。
+    </p>
+    <div class="hero-actions reveal d3">
+      <a class="btn btn-primary" href="#sim">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        直接进协作模拟器
+      </a>
+      <a class="btn btn-ghost" href="#basics">先看基础概念</a>
+    </div>
+
+    <!-- Hero mini preview -->
+    <div class="hero-preview reveal d4" aria-hidden="true">
+      <div class="hp-head">
+        <span class="hp-dot"></span><span class="hp-dot"></span><span class="hp-dot"></span>
+        <span class="hp-title">git-sim — 预览</span>
+      </div>
+      <div class="hp-body">
+        <div class="hp-col">
+          <div class="hp-who hp-a">开发者 A</div>
+          <div class="hp-chain">
+            <span class="hp-pill a">a1</span>
+            <span class="hp-pill a">a2</span>
+            <span class="hp-fly" id="hpFly"></span>
+          </div>
+        </div>
+        <div class="hp-arrow"><span>$ git push</span><i></i></div>
+        <div class="hp-col">
+          <div class="hp-who hp-r">远端 origin/main</div>
+          <div class="hp-chain">
+            <span class="hp-pill a">a1</span>
+            <span class="hp-pill a">a2</span>
+            <span class="hp-pill new" id="hpPill">a3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="hero-note reveal d4">
+      面向人群：会敲 <code>git commit</code>，但一到 <code>pull</code> 就开始怀疑人生的你。
+      <strong>本课不讲 worktree</strong>，理由见文末。
+    </p>
+  </div>
+</section>
+
+<!-- ================= 1. 四大区 ================= -->
+<section class="section" id="basics">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">01</span>
+      <h2>先记住四个区，Git 就不神秘了</h2>
+      <p class="sec-sub">
+        Git 的一切操作，本质上只是在这四个"容器"之间搬运文件。搞懂搬运路径，所有命令都能自己推出来。
+      </p>
+    </div>
+
+    <div class="zone-flow reveal">
+      <div class="zone" data-zone="work">
+        <div class="zone-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </div>
+        <div class="zone-name">工作区</div>
+        <div class="zone-en">Working Directory</div>
+        <div class="zone-desc">你正在编辑的文件夹。你在 IDE 里看到的代码就在这里，<strong>它还没有被 Git 记住</strong>。</div>
+      </div>
+
+      <div class="zone-arrow">
+        <span class="cmd">git add</span>
+        <svg class="arrow" viewBox="0 0 22 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="11" y1="3" x2="11" y2="25"/>
+          <polyline points="4,20 11,28 18,20"/>
+        </svg>
+      </div>
+
+      <div class="zone" data-zone="stage">
+        <div class="zone-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h10M4 17h13"/></svg>
+        </div>
+        <div class="zone-name">暂存区</div>
+        <div class="zone-en">Staging Area</div>
+        <div class="zone-desc">你的"待提交清单"。这一步最容易被忽略，但它是 <b>只提交一部分改动</b> 的唯一办法。</div>
+      </div>
+
+      <div class="zone-arrow">
+        <span class="cmd">git commit</span>
+        <svg class="arrow" viewBox="0 0 22 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="11" y1="3" x2="11" y2="25"/>
+          <polyline points="4,20 11,28 18,20"/>
+        </svg>
+      </div>
+
+      <div class="zone" data-zone="local">
+        <div class="zone-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg>
+        </div>
+        <div class="zone-name">本地仓库</div>
+        <div class="zone-en">Local Repository</div>
+        <div class="zone-desc">你电脑上的 <code>.git</code> 目录。这里已经有完整历史，但<strong>只有你自己看得到</strong>。</div>
+      </div>
+
+      <div class="zone-arrow wide">
+        <span class="cmd">git pull</span>
+        <svg class="arrow bidir" viewBox="0 0 22 50" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="11" y1="12" x2="11" y2="40"/>
+          <polyline points="4,17 11,7 18,17"/>
+          <polyline points="4,34 11,44 18,34"/>
+        </svg>
+        <span class="cmd">git push</span>
+      </div>
+
+      <div class="zone zone-remote" data-zone="remote">
+        <div class="zone-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>
+        </div>
+        <div class="zone-name">远端仓库</div>
+        <div class="zone-en">Remote / origin</div>
+        <div class="zone-desc">GitHub / Gitee 上的那份。<b>它是团队的唯一真相</b>——只有推上去，别人才拿得到。</div>
+      </div>
+    </div>
+
+    <div class="note note-key reveal">
+      <div class="note-icon">💡</div>
+      <div>
+        <strong>一句话刻在脑子里：</strong><code>commit</code> 是"<em>存草稿到自己的 U 盘</em>"，<code>push</code> 是"<em>把 U 盘内容上传到团队网盘</em>"。
+        没 push 之前，你的工作在别人眼里等于不存在。
+      </div>
+    </div>
+
+    <div class="note note-warn reveal">
+      <div class="note-icon">⚠️</div>
+      <div>
+        <strong>新手第一大坑：</strong>以为 <code>commit</code> 了就等于"保存到项目"了。
+        你 <code>git add</code> 一堆、切个分支、<code>git checkout</code> 一下，代码可能就没了——因为它只在工作区，Git 根本不认识。
+        <b>改完代码先 commit，这是最便宜的安全带。</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. 五个命令 ================= -->
+<section class="section section-alt" id="commands">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">02</span>
+      <h2>五个命令，各自到底做了什么</h2>
+      <p class="sec-sub">把网上那些互相抄的定义全扔掉。用"货物运输"来理解，五分钟就够。</p>
+    </div>
+
+    <div class="cmd-grid">
+      <article class="cmd-card reveal">
+        <div class="cmd-card-top">
+          <code class="cmd-name">git add .</code>
+          <span class="cmd-tag tag-local">本地</span>
+        </div>
+        <p class="cmd-analogy">📦 <strong>打包</strong>：把工作区里选中的文件放进待提交箱子。</p>
+        <ul class="cmd-pts">
+          <li>不执行 add，commit 会报 <code>nothing to commit</code>（新文件）或只提交已 add 的部分</li>
+          <li>新手最常用 <code>git add .</code>，更精准的是 <code>git add 路径/文件.cs</code></li>
+          <li>大型项目（Unity 的 <code>Library/</code>、<code>Temp/</code>）务必先进 <code>.gitignore</code></li>
+        </ul>
+      </article>
+
+      <article class="cmd-card reveal d1">
+        <div class="cmd-card-top">
+          <code class="cmd-name">git commit -m "..."</code>
+          <span class="cmd-tag tag-local">本地</span>
+        </div>
+        <p class="cmd-analogy">📸 <strong>拍照存档</strong>：给当前这一刻的项目拍一张不可篡改的快照。</p>
+        <ul class="cmd-pts">
+          <li>每个 commit 有一个唯一哈希（如 <code>a3f9c21</code>），这是你未来的"撤销键"</li>
+          <li>一次 commit 应该只干<em>一件事</em>，别把修 bug 和改文案揉一起</li>
+          <li>提交信息写"为什么"而不是"改了什么"——后者 Git 自己会 diff 出来</li>
+        </ul>
+      </article>
+
+      <article class="cmd-card reveal d2">
+        <div class="cmd-card-top">
+          <code class="cmd-name">git push</code>
+          <span class="cmd-tag tag-net">网络</span>
+        </div>
+        <p class="cmd-analogy">📤 <strong>上传</strong>：把本地仓库里的提交同步到远端。</p>
+        <ul class="cmd-pts">
+          <li>注意是"上传本地已有的"，不会凭空下载别人的东西</li>
+          <li>远端有你没见过的新提交时，push 会被<em>拒绝</em>（non-fast-forward）</li>
+          <li>被拒绝是 Git 在保护你，<b>不是报错</b>，先去 pull 就行</li>
+        </ul>
+      </article>
+
+      <article class="cmd-card reveal d3">
+        <div class="cmd-card-top">
+          <code class="cmd-name">git fetch</code>
+          <span class="cmd-tag tag-net">网络</span>
+        </div>
+        <p class="cmd-analogy">👀 <strong>只看不碰</strong>：下载远端最新情况，但绝不改你的代码。</p>
+        <ul class="cmd-pts">
+          <li>下载后你本地多出一个 <code>origin/main</code>，它<em>只是远端的快照</em></li>
+          <li>你的工作区、暂存区、本地分支，一个字节都没变</li>
+          <li>这是"我先看看别人干了啥"的<strong>零风险</strong>动作，强烈建议形成习惯</li>
+        </ul>
+      </article>
+
+      <article class="cmd-card reveal d4">
+        <div class="cmd-card-top">
+          <code class="cmd-name">git pull</code>
+          <span class="cmd-tag tag-net">网络</span>
+        </div>
+        <p class="cmd-analogy">📥 <strong>下载并合并</strong>：fetch 完顺手把别人的改动并进你的分支。</p>
+        <ul class="cmd-pts">
+          <li>技术等价于 <code>git fetch</code> + <code>git merge</code>，只是省了一步</li>
+          <li><b>会改你的代码</b>，所以之前必须先 commit 保护现场</li>
+          <li>可能撞出冲突，冲突怎么办 → 往下看</li>
+        </ul>
+      </article>
+    </div>
+
+    <!-- fetch vs pull 动画 -->
+    <div class="compare reveal">
+      <div class="compare-head">
+        <h3>最值得记住的对比：<code>fetch</code> 和 <code>pull</code> 差在哪？</h3>
+        <p>它们开头做的事完全一样，区别只在最后一步——<strong>要不要动我的代码</strong>。</p>
+      </div>
+
+      <div class="compare-grid">
+        <div class="cmp-card" id="cmpFetch">
+          <div class="cmp-title"><code>git fetch origin</code></div>
+          <div class="cmp-stage">
+            <div class="cmp-side">
+              <div class="cmp-node local-node">你的本地<br><small>代码不动</small></div>
+            </div>
+            <div class="cmp-mid">
+              <div class="cmp-arrow" data-cmp-arrow="fetch"><i></i></div>
+              <span class="cmp-cmd">$ git fetch</span>
+            </div>
+            <div class="cmp-side">
+              <div class="cmp-node remote-node">远端<br><small>下载快照</small></div>
+            </div>
+          </div>
+          <div class="cmp-result">
+            <div class="cmp-res-item ok">✅ 新增 <code>origin/main</code> 引用</div>
+            <div class="cmp-res-item ok">✅ 你的文件<strong>一个都没变</strong></div>
+            <div class="cmp-res-item neutral">➖ 想合并？自己再敲 <code>git merge</code></div>
+          </div>
+          <button class="btn btn-small cmp-btn" data-play="fetch">▶ 播放 fetch</button>
+        </div>
+
+        <div class="cmp-card" id="cmpPull">
+          <div class="cmp-title"><code>git pull origin main</code></div>
+          <div class="cmp-stage">
+            <div class="cmp-side">
+              <div class="cmp-node local-node">你的本地<br><small id="cmpLocalState">待命</small></div>
+            </div>
+            <div class="cmp-mid">
+              <div class="cmp-arrow" data-cmp-arrow="pull"><i></i></div>
+              <span class="cmp-cmd">$ git pull</span>
+            </div>
+            <div class="cmp-side">
+              <div class="cmp-node remote-node">远端<br><small>下载快照</small></div>
+            </div>
+          </div>
+          <div class="cmp-result">
+            <div class="cmp-res-item warn">⚠️ fetch（下载）</div>
+            <div class="cmp-res-item warn">⚠️ merge（<strong>动你的文件</strong>）</div>
+            <div class="cmp-res-item neutral">➖ 前提：本地改动必须先 commit</div>
+          </div>
+          <button class="btn btn-small cmp-btn" data-play="pull">▶ 播放 pull</button>
+        </div>
+      </div>
+
+      <div class="note note-tip reveal">
+        <div class="note-icon">🎯</div>
+        <div><strong>实用习惯：</strong>开工前先 <code>git fetch</code> 摸清情况，想清楚了再决定用 merge 还是 rebase 来整合。
+        对初学者来说，"先 fetch 看看" 能避免掉进绝大多数"我是不是把别人代码覆盖了"的恐慌里。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3. 分支 ================= -->
+<section class="section" id="branches">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">03</span>
+      <h2>分支：本地分支和"远程分支"其实是两个东西</h2>
+      <p class="sec-sub">
+        很多人第一次看 <code>git branch -a</code> 输出就懵了：为什么 <code>main</code> 和 <code>origin/main</code> 是两个分支？
+        因为它们真的就是两份独立的数据。
+      </p>
+    </div>
+
+    <div class="branch-demo reveal">
+      <div class="bd-head">
+        <h3>点一下，看看两个仓库各自的样子</h3>
+        <div class="bd-switch">
+          <button class="bd-tab active" data-bd="fresh">刚 clone 完</button>
+          <button class="bd-tab" data-bd="pushed">A 推了新提交</button>
+          <button class="bd-tab" data-bd="fetched">B 也 fetch 了</button>
+        </div>
+      </div>
+
+      <div class="bd-body">
+        <div class="bd-repo bd-remote">
+          <div class="bd-repo-head">
+            <span class="bd-badge bd-badge-remote">远端 origin</span>
+            <span class="bd-repo-name">GitHub 上的那份</span>
+          </div>
+          <div class="bd-branches" id="bdRemote">
+            <div class="bd-branch" data-b="main">
+              <div class="bd-bname"><code>main</code> <span class="bd-ref">真实分支</span></div>
+              <div class="bd-chain"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bd-repo bd-a">
+          <div class="bd-repo-head">
+            <span class="bd-badge bd-badge-a">A 的电脑</span>
+            <span class="bd-repo-name">本地仓库</span>
+          </div>
+          <div class="bd-branches" id="bdA">
+            <div class="bd-branch" data-b="main">
+              <div class="bd-bname"><code>main</code> <span class="bd-ref">真实分支</span></div>
+              <div class="bd-chain"></div>
+            </div>
+            <div class="bd-branch" data-b="originmain">
+              <div class="bd-bname"><code>origin/main</code> <span class="bd-ref">远端跟踪</span></div>
+              <div class="bd-chain"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bd-repo bd-b">
+          <div class="bd-repo-head">
+            <span class="bd-badge bd-badge-b">B 的电脑</span>
+            <span class="bd-repo-name">本地仓库</span>
+          </div>
+          <div class="bd-branches" id="bdB">
+            <div class="bd-branch" data-b="main">
+              <div class="bd-bname"><code>main</code> <span class="bd-ref">真实分支</span></div>
+              <div class="bd-chain"></div>
+            </div>
+            <div class="bd-branch" data-b="originmain">
+              <div class="bd-bname"><code>origin/main</code> <span class="bd-ref">远端跟踪</span></div>
+              <div class="bd-chain"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bd-explain" id="bdExplain"></div>
+    </div>
+
+    <div class="note note-key reveal">
+      <div class="note-icon">💡</div>
+      <div>
+        <strong><code>origin/main</code> 不是"远程的 main"，它是"我上次 <code>fetch</code> 时看到的远程 main 照片"。</strong>
+        远端后来又变了，<code>origin/main</code> 不会自动更新——必须再 <code>git fetch</code>。
+        所以 <code>origin/</code> 开头的东西只作参考，<strong>永远不要直接在上面改代码</strong>。
+      </div>
+    </div>
+
+    <div class="branch-cards">
+      <div class="bc reveal">
+        <div class="bc-head">分支是干什么用的</div>
+        <ul>
+          <li><b>隔离改动</b>：你在 <code>feature/login</code> 上写一半能跑的东西，<code>main</code> 依然干净可交付</li>
+          <li><b>并行开发</b>：A 在 <code>feature/audio</code>，B 在 <code>feature/ui</code>，互不干扰</li>
+          <li><b>救火专用</b>：线上出 bug 从 <code>main</code> 拉 <code>hotfix/xxx</code>，修完直接合回去</li>
+        </ul>
+      </div>
+      <div class="bc reveal d1">
+        <div class="bc-head">分支的三个日常命令</div>
+        <ul class="code-list">
+          <li><code>git switch -c feature/login</code><span>新建并切过去</span></li>
+          <li><code>git switch main</code><span>切回主干</span></li>
+          <li><code>git switch -</code><span>立刻跳回上一个分支（超常用）</span></li>
+        </ul>
+      </div>
+      <div class="bc reveal d2">
+        <div class="bc-head">提交前看一眼自己在哪</div>
+        <p class="bc-p">命令栏里 <code>git status</code> 第一行永远会告诉你当前分支：</p>
+        <pre class="code-block">On branch feature/login
+Your branch is up to date with 'origin/feature/login'.</pre>
+        <p class="bc-p bc-warn">如果显示 <code>detached HEAD</code>，说明你不在任何分支上（常见于直接 checkout 了 commit id）。
+        别慌，代码没丢，敲 <code>git switch -</code> 回分支即可。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4. 双人协作模拟器 ================= -->
+<section class="section section-sim" id="sim">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">04</span>
+      <h2>双人协作模拟器</h2>
+      <p class="sec-sub">
+        左边是开发者 A，中间是远端仓库，右边是开发者 B。选一个场景，然后一步一步点。
+        每一步都会告诉你：<strong>谁在哪个仓库、动了什么、为什么</strong>。
+      </p>
+    </div>
+
+    <!-- 场景选择 -->
+    <div class="scn-tabs reveal" id="scnTabs" role="tablist"></div>
+
+    <!-- 场景说明 -->
+    <div class="scn-intro reveal" id="scnIntro"></div>
+
+    <!-- 模拟器主体 -->
+    <div class="sim reveal" id="simRoot">
+
+      <!-- 终端 -->
+      <div class="sim-term" id="simTerm">
+        <div class="term-bar">
+          <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
+          <span class="term-title" id="termTitle">终端</span>
+        </div>
+        <div class="term-body" id="termBody"></div>
+      </div>
+
+      <!-- 三栏 -->
+      <div class="sim-stage">
+        <div class="sim-col" id="colA"></div>
+        <div class="sim-col sim-col-remote" id="colRemote"></div>
+        <div class="sim-col" id="colB"></div>
+      </div>
+
+      <!-- 当前步骤讲解 -->
+      <div class="sim-explain" id="simExplain"></div>
+
+      <!-- 控制条 -->
+      <div class="sim-controls">
+        <button class="btn btn-ghost btn-sm" id="btnPrev">← 上一步</button>
+        <button class="btn btn-primary btn-sm" id="btnNext">下一步 →</button>
+        <button class="btn btn-ghost btn-sm" id="btnAuto">▶ 自动播放</button>
+        <button class="btn btn-ghost btn-sm" id="btnReset">↺ 重置</button>
+        <div class="sim-progress">
+          <div class="sim-progress-bar"><i id="simProgFill"></i></div>
+          <span id="simProgText">1 / 1</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="note note-key reveal">
+      <div class="note-icon">🧭</div>
+      <div><strong>玩完这六个场景，你会得到一条可以直接贴在工位上的心法：</strong>
+      <code>commit → push → pull</code>，任何时候<em>先 commit 再 pull</em>；冲突时<em>先保别人的逻辑，再把自己的接上去</em>；永远不要用 <code>push --force</code> 推共享分支。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5. 冲突 ================= -->
+<section class="section section-alt" id="conflict">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">05</span>
+      <h2>文件被覆盖时，到底发生了什么</h2>
+      <p class="sec-sub">
+        "两个人改了同一个文件的同一行"——这是新手最怕的场景。下面把它拆开：冲突是怎么产生的、那些尖括号是什么意思、该怎么判。
+      </p>
+    </div>
+
+    <div class="conflict-why reveal">
+      <div class="cw-card">
+        <div class="cw-num">1</div>
+        <h3>你和同事从同一个点出发</h3>
+        <p>你们的分支都从 commit <code>c1</code> 分叉出去。Git 知道大家起点一致，这是安全的。</p>
+      </div>
+      <div class="cw-arrow"><svg viewBox="0 0 40 20" width="40" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10h34M30 4l6 6-6 6"/></svg></div>
+      <div class="cw-card">
+        <div class="cw-num">2</div>
+        <h3>你们分别提交了</h3>
+        <p>A 产出 <code>a1</code>，B 产出 <code>b1</code>。两份历史现在<em>分叉</em>了，谁也不包含谁。</p>
+      </div>
+      <div class="cw-arrow"><svg viewBox="0 0 40 20" width="40" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10h34M30 4l6 6-6 6"/></svg></div>
+      <div class="cw-card cw-hot">
+        <div class="cw-num">3</div>
+        <h3>合并时撞在同一行</h3>
+        <p>Git 发现两边都改了 <code>maxHealth</code> 这一行。它<strong>没有权力</strong>替你决定谁对，于是停下来问你。</p>
+      </div>
+    </div>
+
+    <div class="conflict-file reveal">
+      <div class="cf-head">
+        <div>
+          <div class="cf-path"><code>PlayerHealth.cs</code></div>
+          <div class="cf-sub">合并冲突后的文件长这样</div>
+        </div>
+        <button class="btn btn-small btn-ghost" id="cfToggle">隐藏标记看看结果</button>
+      </div>
+      <pre class="cf-code" id="cfCode"></pre>
+      <div class="cf-legend" id="cfLegend">
+        <div class="cfl-item">
+          <span class="cfl-swatch ours"></span>
+          <div><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code><strong>你的这一侧</strong>（你当前所在的分支）</div>
+        </div>
+        <div class="cfl-item">
+          <span class="cfl-swatch base"></span>
+          <div><code>|||||||</code><strong>共同祖先</strong>（你俩分叉前的版本，只作参考）</div>
+        </div>
+        <div class="cfl-item">
+          <span class="cfl-swatch theirs"></span>
+          <div><code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/main</code><strong>对方这一侧</strong>（被合并进来的远端）</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="resolve-flow reveal">
+      <h3>正确的解决顺序（别跳步）</h3>
+      <div class="rf-steps">
+        <div class="rf-step">
+          <div class="rf-num">1</div>
+          <div class="rf-body">
+            <div class="rf-title">先 <code>git status</code> 看清全局</div>
+            <p>Git 会列出所有冲突文件，标记在 <code>Unmerged paths</code> 下。心里有个数：这次要处理几个文件。</p>
+          </div>
+        </div>
+        <div class="rf-step">
+          <div class="rf-num">2</div>
+          <div class="rf-body">
+            <div class="rf-title">读懂<em>两边各自想干什么</em></div>
+            <p>这一步是分水岭。带着问题看代码：同事把 100 改成 80，是<strong>策划要求降血量</strong>还是<strong>手滑</strong>？
+            <b>不知道对方意图就动手合并，是把 bug 送进主干的最佳方式。</b></p>
+          </div>
+        </div>
+        <div class="rf-step">
+          <div class="rf-num">3</div>
+          <div class="rf-body">
+            <div class="rf-title">写下最终代码，删掉所有标记行</div>
+            <p>三个尖括号、三个等号、三个大于号，<strong>一个都不能留</strong>。最终结果可能是合并两份（比如两份 import 都要保留），不一定是二选一。</p>
+          </div>
+        </div>
+        <div class="rf-step">
+          <div class="rf-num">4</div>
+          <div class="rf-body">
+            <div class="rf-title">编译 / 跑一遍，确认能跑</div>
+            <p>别急着提交。Unity 项目至少让 Console 干净；再 <code>git diff --check</code> 扫一遍有没有漏网的标记。</p>
+          </div>
+        </div>
+        <div class="rf-step">
+          <div class="rf-num">5</div>
+          <div class="rf-body">
+            <div class="rf-title"><code>git add</code> 该文件 → <code>git commit</code></div>
+            <p>解决一个就 add 一个，别攒到最后。Git 在你没 add 之前<strong>禁止提交</strong>，这是保护你。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="principle-label">核心原则</div>
+      <h3>冲突时默认"以远端为主"，但不是无脑覆盖</h3>
+      <div class="principle-grid">
+        <div class="pr-item">
+          <div class="pr-tag pr-keep">✅ 应该保留对方</div>
+          <p>对方的改动<em>有明确意图</em>：他可能接了策划案、修了线上 bug、加了新的调用方。
+          无脑覆盖 = 让团队重复劳动，Git 也会留下一个"你删了他代码"的提交记录。</p>
+        </div>
+        <div class="pr-item">
+          <div class="pr-tag pr-adapt">🔧 然后接上自己的</div>
+          <p>把对方的结果当<strong>新基线</strong>，把你的改动在这条新基线上重新做一遍。
+          冲突解决完的代码，往往既不是纯 A 也不是纯 B，而是第三种更完整的东西。</p>
+        </div>
+        <div class="pr-item">
+          <div class="pr-tag pr-ask">❓ 拿不准就问</div>
+          <p>不确定对方意图时，<strong>直接问人</strong>，一句"这行你是不是特意改的？"
+          五秒钟解决，比猜错方向返工一小时划算得多。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="note note-danger reveal">
+      <div class="note-icon">🚨</div>
+      <div>
+        <strong>merge 和 rebase 的"流动方向"是反的，看一眼尖括号旁边就能分清。</strong>
+
+        <p><b>第一层 · 直觉版（先记住这个）：</b></p>
+        <ul>
+          <li><b>Merge</b> —— <em>把对方收进来</em>。你在 main 上把 feature/x 合并进来，你是接收方。</li>
+          <li><b>Rebase</b> —— <em>把自己贴过去</em>。你在 feature/x 上把自己的提交变基到 main 上面，你是发送方。</li>
+        </ul>
+        <p style="color:var(--ink-3);font-style:italic;margin:8px 0">流向是反的，所以下面 <code>--ours</code> / <code>--theirs</code> 的指代才会反。</p>
+
+        <p><b>第二层 · 精确版（用到 <code>--ours</code> 之前再看一眼）：</b></p>
+        <ul>
+          <li>在 main 上 <code>git merge feature/x</code>：<code>HEAD</code> 是 main → <code>--ours = main</code>（你自己），<code>--theirs = feature/x</code>（对方）。</li>
+          <li>在 feature/x 上 <code>git rebase main</code>：<code>HEAD</code> <em>物理上还是 feature/x</em>，但 Git 内部是把 main 的最新提交当底座、重放你的提交——所以 <code>--ours = main</code>（这次合并的接收方），<code>--theirs = feature/x</code> 自己的提交。</li>
+          <li><b>一眼分辨当前是 merge 还是 rebase：</b>看冲突文件右侧尖括号旁边的字符串——<br>
+          &nbsp;&nbsp;&nbsp;· merge 写的是 <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/x</code>（<b>分支名</b>）<br>
+          &nbsp;&nbsp;&nbsp;· rebase 写的是 <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; 1c9a4e2</code>（<b>commit hash</b>）<br>
+          看到 commit hash，就是 rebase——这时候的 <code>--ours</code> 指的是 main。</li>
+        </ul>
+
+        <p><b>记忆窍门：</b><code>--ours</code> 不永远等于"我所在的分支"，而是"这次合并操作的<em>接收方</em>"。merge 和 rebase 的接收方不一样，标识符自然就反。</p>
+        <b>所以用 <code>--ours</code> / <code>--theirs</code> 之前，先 <code>git status</code> 看清当前在哪个分支，再看一眼冲突标记旁边写的是分支名还是 commit hash。</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 6. 协作铁律 ================= -->
+<section class="section" id="rules">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">06</span>
+      <h2>多人协作的七条铁律</h2>
+      <p class="sec-sub">下面每一条都对应一类真实事故。背下来，你就能少加班。</p>
+    </div>
+
+    <div class="rules">
+      <article class="rule reveal">
+        <div class="rule-num">1</div>
+        <div class="rule-body">
+          <h3>先 commit，再 pull</h3>
+          <p>这是本课最重要的一条。pull 会改你的工作区，如果你有<em>没提交</em>的改动，Git 可能直接拒绝你，或者更糟——合并结果把那些改动搅乱。</p>
+          <p class="rule-say">✅ <code>git status</code> 确认干净 → <code>git add .</code> → <code>git commit</code> → <code>git pull</code> → 干活</p>
+          <p class="rule-why"><b>为什么：</b>commit 是快照，pull 只会在"两个版本"之间合并。工作区里的裸改动是"没有版本的文件"，它无处可去。</p>
+        </div>
+      </article>
+
+      <article class="rule reveal d1">
+        <div class="rule-num">2</div>
+        <div class="rule-body">
+          <h3>不要直接往 <code>main</code> 推代码</h3>
+          <p>共享主干应该通过 <strong>Pull Request</strong> 合并，这样有人能看一眼、能跑测试、能留下讨论记录。</p>
+          <p class="rule-say">✅ <code>git switch -c feature/xxx</code> → 干活 → <code>git push -u origin feature/xxx</code> → 开 PR → 评审 → 合并</p>
+          <p class="rule-why"><b>为什么：</b>没有 PR 的推送意味着<em>你既是作者又是裁判</em>。团队规模一大，main 会变成谁都能改的公共黑板。</p>
+        </div>
+      </article>
+
+      <article class="rule reveal d2">
+        <div class="rule-num">3</div>
+        <div class="rule-body">
+          <h3>共享分支上永远不要 <code>push --force</code></h3>
+          <p>强推会直接<em>抹掉</em>远端历史——包括同事刚推上去、你本地还没拉到的提交。</p>
+          <p class="rule-say">✅ 被拒了就 <code>git fetch</code> → <code>git pull --rebase</code> → <code>git push</code></p>
+          <p class="rule-why"><b>为什么：</b>Git 拒绝 non-fast-forward 推送，是它在替你踩刹车。真要强推，只用 <code>--force-with-lease</code>，且只对自己的私有分支用。</p>
+        </div>
+      </article>
+
+      <article class="rule reveal d3">
+        <div class="rule-num">4</div>
+        <div class="rule-body">
+          <h3>一次 commit 只做一件事</h3>
+          <p>不要把「重构 + 修 bug + 改配置」打包成一个提交。</p>
+          <p class="rule-say">✅ 拆成三个 commit：<code>refactor: 抽出工具类</code> / <code>fix: 空引用</code> / <code>chore: 调整配置</code></p>
+          <p class="rule-why"><b>为什么：</b>出问题时 <code>git revert</code> 只能整条撤销。混在一起的提交会连带撤掉别人的需求。</p>
+        </div>
+      </article>
+
+      <article class="rule reveal d4">
+        <div class="rule-num">5</div>
+        <div class="rule-body">
+          <h3>别在 <code>.gitignore</code> 上偷懒，Unity 项目尤其注意</h3>
+          <p>Unity 的 <code>Library/</code>、<code>Temp/</code>、<code>Logs/</code>、<code>obj/</code> 是自动生成的，几 GB 很正常，而且每次内容都不同。</p>
+          <p class="rule-say">✅ 忽略它们，只提交 <code>Assets/</code>、<code>ProjectSettings/</code>、<code>Packages/</code></p>
+          <p class="rule-why"><b>为什么：</b>不忽略的话，clone 要下载几个 G，而且每次 pull 都会因为这些文件变化而产生<em>假冲突</em>——特别容易误导初学者以为自己改错了什么。</p>
+        </div>
+      </article>
+
+      <article class="rule reveal d5">
+        <div class="rule-num">6</div>
+        <div class="rule-body">
+          <h3>分支别养太久，冲突是攒出来的</h3>
+          <p>一个分支开三周不合并，等你回来时它和主干的差距会制造大量本可避免的冲突。</p>
+          <p class="rule-say">✅ 勤 <code>git fetch</code>，分支存活控制在<strong>几天内</strong>；实在要拖就先 <code>git rebase origin/main</code> 同步一下</p>
+          <p class="rule-why"><b>为什么：</b>分叉越深，Git 能自动合并的部分越少，冲突概率呈指数上升。</p>
+        </div>
+      </article>
+
+      <article class="rule reveal d6">
+        <div class="rule-num">7</div>
+        <div class="rule-body">
+          <h3>三个救命命令，先背下来</h3>
+          <p>遇到任何"我好像搞砸了"的时刻，先试这三个——它们几乎都能全身而退。</p>
+          <p class="rule-say">
+            <code>git status</code> 看现状 ·
+            <code>git log --oneline -10</code> 看历史 ·
+            <code>git reflog</code> <b>看被丢弃的提交还在不在</b>
+          </p>
+          <p class="rule-why"><b>为什么：</b>绝大多数"代码丢了"的事件其实只是"提交被改写了"。reflog 记录了 HEAD 的移动轨迹，包括那些看起来消失了的哈希——<b>它几乎能从任何误操作里救回你的代码。</b></p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7. 工作流 ================= -->
+<section class="section section-alt" id="workflows">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">07</span>
+      <h2>团队通常怎么约定流程</h2>
+      <p class="sec-sub">
+        Git 本身对"团队怎么协作"没有意见，流程是团队自己定的。市面上主流的是下面这三种，<strong>选一种比什么都重要，选错的代价比不会大。</strong>
+      </p>
+    </div>
+
+    <div class="wf-cards">
+      <div class="wf-card reveal">
+        <div class="wf-badge wf-rec">最常见 · 推荐初学者从这里开始</div>
+        <h3>Feature Branch（GitHub Flow）</h3>
+        <p class="wf-desc">只有一条长期分支 <code>main</code>，任何改动都开一个短命分支，评审完就合掉删掉。</p>
+        <pre class="wf-diagram">main      ●───●───●───●──●──●──▶
+                \         /
+feature/x     ●───●───▶</pre>
+        <ul class="wf-list">
+          <li><b>适合：</b>几乎所有小团队、SaaS、每天都在发版的项目</li>
+          <li><b>优点：</b>规则少到一句话说完，新人当天就能上手</li>
+          <li><b>缺点：</b>需要同时维护多个线上版本时不适用</li>
+        </ul>
+      </div>
+
+      <div class="wf-card reveal d1">
+        <div class="wf-badge">最激进</div>
+        <h3>Trunk-Based Development</h3>
+        <p class="wf-desc">几乎所有人都直接往 <code>main</code> 提交，分支只活几个小时，用特性开关（feature flag）藏住未完成的功能。</p>
+        <pre class="wf-diagram">main   ●─●─●─●─●─●─●─●─▶
+              ↑
+       (未完成功能靠 flag 关闭)</pre>
+        <ul class="wf-list">
+          <li><b>适合：</b>CI 强、测试覆盖高、团队互信度高的团队</li>
+          <li><b>优点：</b>冲突最少，交付速度最快</li>
+          <li><b>缺点：</b>没有强 CI 和 flag 机制的话，<b>main 天天崩</b>，别学这个</li>
+        </ul>
+      </div>
+
+      <div class="wf-card reveal d2">
+        <div class="wf-badge">经典但偏重</div>
+        <h3>Gitflow</h3>
+        <p class="wf-desc">两条长期分支（<code>main</code> 存生产、<code>develop</code> 存开发中），外加 feature / release / hotfix 三类临时分支。</p>
+        <pre class="wf-diagram">main      ●────────●────────▶ (tag v1.0)
+              \      /
+develop    ●──●─●─●─●─●─●─▶
+             \        /
+feature/x     ●───●─▶</pre>
+        <ul class="wf-list">
+          <li><b>适合：</b>Unity 插件、SDK 这类<em>有明确版本号、要同时维护多个版本</em>的软件</li>
+          <li><b>优点：</b>版本管理极其清晰，每个发版可追溯</li>
+          <li><b>缺点：</b><b>仪式感很重</b>，个人项目和小型插件项目往往用不上，别硬套</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note note-tip reveal">
+      <div class="note-icon">🧭</div>
+      <div><strong>给你（做 Unity 插件）的实际建议：</strong>
+      先用最简单的 Feature Branch 跑起来——<code>main</code> 保持可发布，每个插件版本或每个功能开一个 <code>feature/v1-2-aesir-inspector</code> 这样的分支，合并时打 <code>tag</code>。
+      什么时候需要 <code>develop</code> 分支？当你发现「main 上有些还没准备发布的东西」开始碍事的时候——到那时再引入不迟。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 8. rebase ================= -->
+<section class="section" id="rebase">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">08</span>
+      <h2>进阶一点：rebase（变基）到底是什么</h2>
+      <p class="sec-sub">
+        rebase 常被说成"高级操作"，其实一句话就能说清：<strong>把你的提交拔下来，插到别的地方，然后重新拍一遍照。</strong>
+        难的不是概念，是知道什么时候该用、什么时候绝对不能。
+      </p>
+    </div>
+
+    <div class="rb-compare reveal">
+      <div class="rb-card">
+        <div class="rb-title">merge：加一条线，历史分叉后再汇合</div>
+        <pre class="rb-graph">        ●───●───M───▶  (main)
+       /         /
+      ●───●───●
+
+多出一个 M 提交（"把 B 合并进来"这件事本身也成了一个提交）</pre>
+      </div>
+      <div class="rb-card">
+        <div class="rb-title">rebase：把线拉直，历史是一条直线</div>
+        <pre class="rb-graph">                ●───▶  (main)
+              /
+        ●───●───●───●
+
+你的两个提交被"重放"到了最新 main 后面，没有额外节点</pre>
+      </div>
+    </div>
+
+    <div class="rb-rules">
+      <div class="rbr reveal">
+        <div class="rbr-icon rbr-good">✅</div>
+        <div>
+          <h4>适合用 rebase 的情况</h4>
+          <ul>
+            <li>整理<strong>自己还没推送</strong>的分支历史，让 log 好看、便于 review</li>
+            <li>长分支开工前先同步主干：<code>git fetch</code> → <code>git rebase origin/main</code>，冲突会在你自己的分支上暴露，而不是等到 PR 时</li>
+            <li>想让提交历史呈现为一条直线（很多团队最终合并时就 rebase + squash）</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rbr reveal d1">
+        <div class="rbr-icon rbr-bad">❌</div>
+        <div>
+          <h4>绝对不要 rebase 的情况</h4>
+          <ul>
+            <li><strong>已经推送给别人的提交</strong>——rebase 会改写它们的哈希，导致所有人下一次的 push/pull 全乱套</li>
+            <li><code>main</code> / <code>develop</code> 这类共享分支</li>
+            <li>你"说不清刚才那个提交干了啥"的时候——rebase 出问题很难排查，先搞清楚再说</li>
+          </ul>
+          <p class="rbr-tip">黄金法则：<b>rebase 只在「这条线只有你一个人推过」的时候做。</b></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="rb-recover reveal">
+      <div class="rb-recover-head">
+        <h4>rebase 中途冲突了怎么办</h4>
+        <span class="rb-tag">每个提交都会停下来问你一次</span>
+      </div>
+      <div class="rb-recover-grid">
+        <div class="rb-rec-item"><code>git status</code><span>看现在卡在哪个提交上</span></div>
+        <div class="rb-rec-item"><code># 手动改文件解决冲突</code><span>和普通冲突一样处理</span></div>
+        <div class="rb-rec-item"><code>git add 文件</code><span>标记这个文件搞定了</span></div>
+        <div class="rb-rec-item"><code>git rebase --continue</code><span>继续重放下一个提交</span></div>
+        <div class="rb-rec-item rb-rec-abort"><code>git rebase --abort</code><span>想放弃？一键回到 rebase 之前</span></div>
+      </div>
+      <p class="rb-recover-note">最后那条 <code>--abort</code> 请务必记住。rebase 会重写历史，中途觉得不对劲时，<strong>放弃重来永远比硬着头皮走下去安全</strong>——反正 rebase 前你一定是干净的。</p>
+    </div>
+
+    <div class="note note-key reveal">
+      <div class="note-icon">🧭</div>
+      <div><strong>对初学者的实用结论：</strong>merge 和 rebase <em>结果几乎一样</em>（都是把两边的改动合到一起），区别只在历史长什么样。
+      日常用 merge 完全没问题；等你开始嫌 <code>git log</code> 太乱、想让 PR 更好读时，再学 rebase 也不迟。
+      <b>先掌握 merge，别为了"显得专业"而上 rebase。</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 9. 速查表 ================= -->
+<section class="section section-alt" id="cheatsheet">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">09</span>
+      <h2>速查表</h2>
+      <p class="sec-sub">打印出来贴在显示器边上。遇到问题先在这里找，找不到再 Google。</p>
+    </div>
+
+    <div class="cheat-groups">
+      <div class="cheat reveal">
+        <div class="cheat-title">🔁 日常循环（90% 的时间都在做这些）</div>
+        <table class="cheat-table">
+          <tr><td><code>git status</code></td><td>我在哪个分支？哪些文件改了？</td></tr>
+          <tr><td><code>git add .</code></td><td>把改动放进待提交清单</td></tr>
+          <tr><td><code>git commit -m "..."</code></td><td>存档一个快照</td></tr>
+          <tr><td><code>git push</code></td><td>上传到远端</td></tr>
+          <tr><td><code>git pull</code></td><td>下载并合并别人的改动</td></tr>
+          <tr><td><code>git log --oneline -10</code></td><td>最近十个提交，一行一个</td></tr>
+        </table>
+      </div>
+
+      <div class="cheat reveal d1">
+        <div class="cheat-title">🌿 分支操作</div>
+        <table class="cheat-table">
+          <tr><td><code>git switch -c feature/x</code></td><td>新建并切到 feature/x</td></tr>
+          <tr><td><code>git switch main</code></td><td>切回主干</td></tr>
+          <tr><td><code>git switch -</code></td><td>跳回上一个分支</td></tr>
+          <tr><td><code>git branch</code></td><td>列出本地分支</td></tr>
+          <tr><td><code>git branch -a</code></td><td>本地 + 远端跟踪分支</td></tr>
+          <tr><td><code>git push -u origin x</code></td><td>首次推送新分支并建立关联</td></tr>
+        </table>
+      </div>
+
+      <div class="cheat reveal d2">
+        <div class="cheat-title">🆘 出问题了</div>
+        <table class="cheat-table">
+          <tr><td><code>git status</code></td><td>冲突了？这里能看到全部冲突文件</td></tr>
+          <tr><td><code>git diff</code></td><td>看具体哪里冲突了</td></tr>
+          <tr><td><code>git merge --abort</code></td><td>放弃这次合并，回到之前</td></tr>
+          <tr><td><code>git rebase --abort</code></td><td>放弃这次变基，回到之前</td></tr>
+          <tr><td><code>git restore 文件</code></td><td>丢弃某个文件的本地改动</td></tr>
+          <tr><td><code>git reflog</code></td><td>找回"消失"的提交</td></tr>
+        </table>
+      </div>
+
+      <div class="cheat reveal d3">
+        <div class="cheat-title">⚔️ 同步与冲突</div>
+        <table class="cheat-table">
+          <tr><td><code>git fetch origin</code></td><td>只下载，不动我的代码</td></tr>
+          <tr><td><code>git pull --rebase</code></td><td>下载并变基（历史更干净）</td></tr>
+          <tr><td><code>git log --oneline origin/main..HEAD</code></td><td>我有哪些提交还没推</td></tr>
+          <tr><td><code>git log --oneline HEAD..origin/main</code></td><td>远端有哪些提交我还没拉</td></tr>
+          <tr><td><code>git diff --check</code></td><td>扫有没有漏掉的冲突标记</td></tr>
+          <tr><td><code>git revert &lt;hash&gt;</code></td><td>安全地撤销一个已推送的提交</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="messages reveal">
+      <h3>提交信息怎么写</h3>
+      <p>不是强制，但团队看得懂、机器能解析的写法会省掉无数麻烦。社区通用的 <a href="https://www.conventionalcommits.org/" target="_blank" rel="noopener">Conventional Commits</a> 约定长这样：</p>
+      <div class="msg-list">
+        <div class="msg"><span class="msg-type t-feat">feat</span><span class="msg-scope">(localization)</span><span class="msg-desc">新增 Addressables 键值校验工具</span></div>
+        <div class="msg"><span class="msg-type t-fix">fix</span><span class="msg-scope">(inspector)</span><span class="msg-desc">修复折叠分组展开后丢失展开状态的问题</span></div>
+        <div class="msg"><span class="msg-type t-ref">refactor</span><span class="msg-scope">core</span><span class="msg-desc">把 JSON 解析抽成独立工具类</span></div>
+        <div class="msg"><span class="msg-type t-doc">docs</span><span class="msg-scope"></span><span class="msg-desc">补充 Unity 2019 LTS 兼容性说明</span></div>
+        <div class="msg"><span class="msg-type t-chore">chore</span><span class="msg-scope"></span><span class="msg-desc">更新 .gitignore，忽略 Library 目录</span></div>
+      </div>
+      <p class="msg-tip">中文完全没问题，团队能看懂比"符合规范"更重要。上面的结构只是让你以后想用 <code>git log --grep</code> 筛选时不会抓瞎。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 10. 不讲什么 ================= -->
+<section class="section" id="notthis">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">10</span>
+      <h2>这份教程故意不讲什么</h2>
+      <p class="sec-sub">教程也有边界。知道哪些东西你现在<span class="serif-italic">不用</span>管，比什么都学一遍更有价值。</p>
+    </div>
+
+    <div class="skip-list">
+      <div class="skip reveal">
+        <div class="skip-head"><span class="skip-icon">🌳</span>git worktree</div>
+        <p>它解决的问题是"我想同时开两个工作区做不同的事"。听起来很美，但——</p>
+        <ul>
+          <li>每个工作区都是<strong>一份完整的项目副本</strong></li>
+          <li>Unity 项目单份就动辄几个 G，<code>Library/</code>、<code>Temp/</code> 全都要重建</li>
+          <li>不像前端那样改完刷新浏览器就能看效果，<strong>要看效果必须真的打开 Unity</strong>，而同一份工程不能被两个 Unity 实例同时打开</li>
+        </ul>
+        <p class="skip-verdict">很多开发了一年的人都没用过 worktree，这很正常。它在<em>大型 C++ 项目</em>和<em>同时维护多个线上版本</em>时才是刚需。
+        <strong>对 Unity 项目的新手来说，它的成本远大于收益。</strong>等你开始同时维护 v1 和 v2 两个插件版本，再回来读它。</p>
+      </div>
+
+      <div class="skip reveal d1">
+        <div class="skip-head"><span class="skip-icon">🪝</span>底层对象模型（blob / tree / commit 对象）</div>
+        <p>知道"每个 commit 有个哈希、是个对象"就够用了。SHA-1 怎么算的、tree 怎么嵌套，Git 内部已经处理好了，初学阶段了解这些<strong>只会增加负担</strong>。</p>
+        <p class="skip-verdict">等到你需要写 Git 脚本或排查诡异的仓库损坏问题，再去读 Pro Git（全书免费）。</p>
+      </div>
+
+      <div class="skip reveal d2">
+        <div class="skip-head"><span class="skip-icon">🧬</span>submodule / sub-tree</div>
+        <p>在一个仓库里嵌套另一个仓库。除非你在做单体仓库（monorepo）或 SDK 分发，否则用不上。</p>
+        <p class="skip-verdict">Unity 项目如果需要引入第三方源码，更常见的是直接 <code>git subtree add</code> 或把代码作为包发布，而不是 submodule——submodule 对新手来说简直是噩梦。</p>
+      </div>
+
+      <div class="skip reveal d3">
+        <div class="skip-head"><span class="skip-icon">🔀</span>cherry-pick / revert 的高级用法</div>
+        <p>知道 <code>git revert</code> 能撤销一个已推送的提交、<code>git cherry-pick</code> 能从别的分支摘一个提交过来，就够日常用了。</p>
+        <p class="skip-verdict">更多花式操作（交互式 rebase、<code>reflog</code> 抢救、<code>bisect</code> 找 bug 引入点）都属于"出问题之后现学"的技能，不需要提前背。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 结尾 ================= -->
+<section class="section section-end">
+  <div class="wrap">
+    <div class="end-card reveal">
+      <h2>如果你只记住一件事</h2>
+      <div class="end-mantra">
+        <div class="end-step"><span>1</span><code>commit</code> 是你的私人存档点，随时按</div>
+        <div class="end-step"><span>2</span><code>push</code> 之前的工作<em>对团队不存在</em></div>
+        <div class="end-step"><span>3</span><code>pull</code> 会动你的代码，所以<em>先 commit</em></div>
+        <div class="end-step"><span>4</span>冲突时<em>先保别人的逻辑</em>，再把你的接上去</div>
+        <div class="end-step"><span>5</span>拿不准就 <code>git status</code>，搞砸了还有 <code>git reflog</code></div>
+      </div>
+      <p class="end-note">
+        其余的——变基、分支模型、团队流程——都是这五条的自然延伸。
+        <strong>先把基本循环跑顺，剩下的会在你真正需要它的时候变得清晰。</strong>
+      </p>
+      <a class="btn btn-primary" href="#sim">再回去玩一遍模拟器</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <p class="footer-title">Git 第一次不慌</p>
+        <p class="footer-sub">面向初学者的交互式 Git 协作教程</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://git-scm.com/book/zh/v2" target="_blank" rel="noopener">Pro Git 中文版（免费）</a>
+        <a href="https://ohshitgit.com/" target="_blank" rel="noopener">Oh Shit, Git!?!</a>
+        <a href="https://github.com/jgm/pandoc" target="_blank" rel="noopener" style="display:none"></a>
+        <a href="https://git-scm.com/docs" target="_blank" rel="noopener">Git 官方文档</a>
+        <a href="https://learngitbranching.js.org/?locale=zh_CN" target="_blank" rel="noopener">Learn Git Branching（可视化练习）</a>
+      </div>
+    </div>
+    <p class="footer-copy">
+      文中 Git 流程与协作规范参考了 Pro Git、GitHub 官方文档以及社区常见的 Gitflow / GitHub Flow / Trunk-Based Development 实践总结。
+      示例项目为虚构的 Unity 脚本，仅用于演示冲突场景。
+    </p>
+  </div>
+</footer>
+
+<script src="assets/js/simulator.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

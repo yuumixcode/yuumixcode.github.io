@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="神舟战神 T8：i7-14700HX + 2.5K 屏与 i7-13650HX + 32GB 版本选购对比，面向物联网工程专业学生。">
+  <title>神舟战神 T8 两款配置选购对比｜物联网工程专业</title>
+  <style>
+    :root {
+      --bg: #fffaf1;
+      --surface: #ffffff;
+      --surface-soft: #fff4df;
+      --surface-strong: #ffe8b8;
+      --text: #3f2d1f;
+      --muted: #7d6957;
+      --primary: #ed891c;
+      --primary-dark: #a94f0b;
+      --accent: #f6c453;
+      --line: #efd7b6;
+      --line-strong: #e7bd7d;
+      --success: #4f703c;
+      --success-bg: #f0f6e8;
+      --warning: #96500f;
+      --warning-bg: #fff1d5;
+      --shadow: 0 14px 40px rgba(151, 91, 25, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 3%, rgba(246, 196, 83, 0.19), transparent 25rem),
+        radial-gradient(circle at 92% 16%, rgba(237, 137, 28, 0.10), transparent 28rem),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    a { color: var(--primary-dark); text-underline-offset: 3px; }
+    a:hover { color: var(--primary); }
+    button, input { font: inherit; }
+    strong { font-weight: 750; }
+    .wrap { width: min(1160px, calc(100% - 40px)); margin-inline: auto; }
+    .mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+    .small { font-size: 0.88rem; color: var(--muted); }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      color: var(--primary-dark);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 24px; height: 3px; border-radius: 9px; background: var(--primary); }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(231, 189, 125, 0.62);
+      background: rgba(255, 250, 241, 0.92);
+      backdrop-filter: blur(14px);
+    }
+    .topbar-inner { display: flex; align-items: center; gap: 24px; min-height: 66px; }
+    .brand { flex: 0 0 auto; color: var(--text); font-weight: 850; text-decoration: none; }
+    .brand span { color: var(--primary); }
+    .nav { display: flex; gap: 20px; overflow-x: auto; scrollbar-width: none; white-space: nowrap; }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav a { color: var(--muted); font-size: 0.88rem; font-weight: 650; text-decoration: none; }
+    .nav a:hover { color: var(--primary-dark); }
+
+    .hero { padding: 70px 0 34px; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 34px; align-items: center; }
+    h1 { margin: 0 0 20px; font-size: clamp(2.15rem, 5vw, 4.35rem); line-height: 1.13; letter-spacing: -0.045em; }
+    h1 .highlight { color: var(--primary-dark); }
+    .hero-lead { max-width: 680px; margin: 0; color: var(--muted); font-size: 1.07rem; }
+    .hero-lead strong { color: var(--text); }
+
+    .verdict-card {
+      position: relative;
+      overflow: hidden;
+      padding: 30px;
+      border: 1px solid var(--line-strong);
+      border-radius: 28px;
+      background: linear-gradient(145deg, #fffdf8, #ffedc7);
+      box-shadow: var(--shadow);
+    }
+    .verdict-card::after {
+      content: "";
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      right: -70px;
+      top: -70px;
+      border-radius: 50%;
+      background: rgba(237, 137, 28, 0.12);
+    }
+    .recommend-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      color: #fffaf1;
+      background: var(--primary-dark);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .verdict-card h2 { margin: 14px 0 12px; font-size: 1.65rem; line-height: 1.35; }
+    .verdict-card p { margin: 0 0 14px; }
+    .verdict-condition { padding-top: 14px; border-top: 1px dashed var(--line-strong); font-size: 0.9rem; color: var(--muted); }
+
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 38px; }
+    .metric { padding: 20px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255, 255, 255, 0.82); }
+    .metric-value { display: block; color: var(--primary-dark); font-size: 1.8rem; font-weight: 850; line-height: 1.25; }
+    .metric-label { display: block; margin-top: 6px; color: var(--muted); font-size: 0.84rem; line-height: 1.5; }
+
+    section { padding: 38px 0; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+    .section-heading h2 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.35rem); line-height: 1.25; letter-spacing: -0.025em; }
+    .section-heading p { max-width: 540px; margin: 0; color: var(--muted); font-size: 0.92rem; }
+    .section-kicker { display: block; margin-bottom: 6px; color: var(--primary-dark); font-size: 0.75rem; font-weight: 850; letter-spacing: 0.12em; }
+
+    .card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .pad { padding: 28px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .option-card { position: relative; padding: 28px; }
+    .option-card.recommended { border: 2px solid var(--primary); }
+    .option-tag { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--surface-soft); color: var(--primary-dark); font-size: 0.77rem; font-weight: 800; }
+    .option-card h3 { margin: 14px 0 4px; font-size: 1.35rem; line-height: 1.4; }
+    .option-sub { color: var(--muted); }
+    .option-price { margin: 18px 0 4px; color: var(--primary-dark); font-size: 2rem; font-weight: 850; line-height: 1.2; }
+    .option-card ul, .pros-cons ul { margin: 16px 0 0; padding-left: 1.25rem; }
+    .option-card li, .pros-cons li { margin: 7px 0; }
+
+    .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    .comparison-table { min-width: 760px; }
+    th, td { padding: 15px 20px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { background: var(--surface-soft); font-size: 0.88rem; }
+    td:first-child { width: 20%; color: var(--muted); font-size: 0.9rem; font-weight: 650; }
+    td:nth-child(2), td:nth-child(3) { width: 40%; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover td { background: #fffcf6; }
+    .win { color: var(--primary-dark); font-weight: 750; }
+    .tie { color: var(--muted); }
+    .table-note { margin: 12px 4px 0; color: var(--muted); font-size: 0.84rem; }
+
+    .callout { padding: 20px 22px; border-left: 4px solid var(--primary); border-radius: 0 16px 16px 0; background: var(--warning-bg); }
+    .callout strong { color: var(--warning); }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.success { border-left-color: var(--success); background: var(--success-bg); }
+    .callout.success strong { color: var(--success); }
+
+    .spec-list { display: grid; gap: 12px; margin-top: 18px; }
+    .spec-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 12px; align-items: center; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+    .spec-row:last-child { padding-bottom: 0; border-bottom: 0; }
+    .spec-row span:first-child { color: var(--muted); }
+    .spec-row strong { text-align: right; }
+    .benchmark { margin-top: 22px; }
+    .benchmark-row { display: grid; grid-template-columns: 110px 1fr 88px; gap: 12px; align-items: center; margin: 13px 0; }
+    .bar-track { height: 13px; overflow: hidden; border-radius: 999px; background: var(--surface-strong); }
+    .bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--primary)); }
+    .bar-fill.secondary { background: #dfbd83; }
+    .benchmark-score { text-align: right; font-weight: 800; }
+
+    .screen-visual { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 22px; }
+    .screen-box { padding: 24px; text-align: center; border: 1px solid var(--line); border-radius: 18px; background: var(--surface-soft); }
+    .screen-ratio { display: grid; place-items: center; width: min(100%, 250px); aspect-ratio: 16 / 10; margin: 0 auto 18px; border: 5px solid #c9863f; border-radius: 10px; background: repeating-linear-gradient(135deg, #fff9ed, #fff9ed 8px, #ffefd1 8px, #ffefd1 16px); box-shadow: inset 0 0 0 1px #e6b978; }
+    .screen-ratio span { padding: 8px 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.88); font-weight: 850; }
+    .screen-box h3 { margin: 0; }
+    .screen-box p { margin: 5px 0 0; color: var(--muted); }
+
+    .workload-table { min-width: 850px; }
+    .workload-table td:first-child { width: 25%; }
+    .workload-table td:nth-child(2) { width: 25%; }
+    .workload-table td:nth-child(3), .workload-table td:nth-child(4) { width: 25%; }
+
+    .calculator { padding: 28px; background: linear-gradient(135deg, #fffdf8, #ffefd0); }
+    .calculator-top { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: center; }
+    .slider-label { display: flex; justify-content: space-between; gap: 12px; font-weight: 750; }
+    .slider-value { color: var(--primary-dark); font-size: 1.25rem; }
+    input[type="range"] { width: 100%; margin: 20px 0 10px; accent-color: var(--primary); cursor: pointer; }
+    .range-labels { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.8rem; }
+    .presets { display: flex; gap: 8px; margin-top: 16px; }
+    .preset { padding: 6px 13px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--primary-dark); background: var(--surface); cursor: pointer; }
+    .preset:hover, .preset[aria-pressed="true"] { color: #fffaf1; background: var(--primary-dark); border-color: var(--primary-dark); }
+    .cost-result { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .cost-number { padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255, 255, 255, 0.84); text-align: center; }
+    .cost-number strong { display: block; color: var(--primary-dark); font-size: 1.55rem; }
+    .cost-number span { color: var(--muted); font-size: 0.78rem; }
+    .cost-table { min-width: 650px; margin-top: 20px; }
+    .cost-table td:first-child { width: auto; }
+
+    .pros-cons .card { padding: 26px; }
+    .pros-cons h3 { margin: 0 0 6px; }
+    .pros { color: var(--success); }
+    .cons { color: var(--warning); }
+
+    .decision-list { display: grid; gap: 12px; }
+    .decision-item { display: grid; grid-template-columns: 1fr 150px; gap: 18px; align-items: center; padding: 17px 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+    .decision-item strong { color: var(--primary-dark); text-align: right; }
+
+    .checklist { display: grid; gap: 12px; counter-reset: checks; }
+    .check-item { position: relative; padding: 18px 20px 18px 62px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); counter-increment: checks; }
+    .check-item::before { content: counter(checks, decimal-leading-zero); position: absolute; left: 18px; top: 18px; color: var(--primary); font-weight: 850; }
+    .check-item p { margin: 0; }
+
+    .sources { display: grid; gap: 12px; }
+    .source { padding: 17px 20px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
+    .source a { overflow-wrap: anywhere; }
+    .source p { margin: 4px 0 0; color: var(--muted); font-size: 0.86rem; }
+    .source-type { display: inline-block; margin-right: 8px; padding: 1px 8px; border-radius: 999px; background: var(--surface-soft); color: var(--primary-dark); font-size: 0.72rem; font-weight: 800; }
+
+    footer { padding: 34px 0 46px; color: var(--muted); font-size: 0.83rem; text-align: center; }
+    .final-banner { margin-top: 36px; padding: 30px; border-radius: 24px; background: var(--primary-dark); color: #fffaf1; text-align: center; }
+    .final-banner h2 { margin: 0 0 8px; font-size: 1.8rem; }
+    .final-banner p { margin: 0; color: #ffe9c7; }
+
+    @media (max-width: 900px) {
+      .hero { padding-top: 44px; }
+      .hero-grid, .calculator-top { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .section-heading { display: block; }
+      .section-heading p { margin-top: 8px; }
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 680px) {
+      .wrap { width: min(100% - 24px, 1160px); }
+      .topbar-inner { gap: 16px; }
+      .brand { font-size: 0.88rem; }
+      .nav { gap: 15px; }
+      .hero { padding-top: 34px; }
+      .hero-grid { gap: 24px; }
+      .verdict-card, .pad, .option-card, .calculator { padding: 22px; }
+      .grid-2, .screen-visual { grid-template-columns: 1fr; }
+      .cost-result { grid-template-columns: 1fr; }
+      .spec-row { grid-template-columns: 1fr 1fr; }
+      .spec-row span:first-child { grid-column: 1 / -1; }
+      .benchmark-row { grid-template-columns: 88px 1fr 72px; gap: 8px; font-size: 0.83rem; }
+      .decision-item { grid-template-columns: 1fr; gap: 4px; }
+      .decision-item strong { text-align: left; }
+      th, td { padding: 13px 15px; }
+      section { padding: 28px 0; }
+    }
+    @media print {
+      .topbar, .presets, input[type="range"] { display: none; }
+      body { background: #ffffff; font-size: 12px; }
+      .wrap { width: 100%; }
+      .hero { padding-top: 20px; }
+      .card, .table-scroll, .verdict-card { box-shadow: none; }
+      section { break-inside: avoid; padding: 18px 0; }
+      a { color: var(--text); text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="#top">T8 <span>/</span> 选购报告</a>
+      <nav class="nav" aria-label="页面导航">
+        <a href="#verdict">结论</a>
+        <a href="#specs">配置</a>
+        <a href="#cpu">CPU</a>
+        <a href="#screen">屏幕</a>
+        <a href="#major">专业需求</a>
+        <a href="#cost">成本</a>
+        <a href="#checklist">购买核验</a>
+        <a href="#sources">来源</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="wrap hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">HASEE 战神 T8 · CV36S06 · RTX 5060</span>
+          <h1>同为 32GB 后，<br><span class="highlight">多 542 元</span>值不值？</h1>
+          <p class="hero-lead">面向物联网工程专业的大一新生，比较 <strong>i7-14700HX + 2.5K/180Hz + 16GB</strong> 与 <strong>i7-13650HX + 1200P/165Hz + 32GB</strong>。价格采用你提供的 8992 元、9192 元，内存升级按 742 元及 700–800 元区间核算。</p>
+        </div>
+        <aside class="verdict-card" id="verdict">
+          <span class="recommend-badge">综合推荐</span>
+          <h2>优先选 14700HX + 2.5K 屏版本</h2>
+          <p>补到 32GB 后总价约 <strong>9734 元</strong>，只比另一款贵 <strong>542 元（约 5.9%）</strong>，换来更强多核性能与更细腻屏幕，适合长期使用。</p>
+          <div class="verdict-condition"><strong>前提：</strong>客服书面确认 16GB 是 <span class="mono">1×16GB</span>、另一插槽为空，且加装内存不影响保修。若预算封顶 9192 元且不想拆机，选 13650HX + 32GB。</div>
+        </aside>
+      </div>
+
+      <div class="metrics" aria-label="核心差异摘要">
+        <div class="metric"><span class="metric-value">+21.7%</span><span class="metric-label">PassMark 多核参考差距<br>不是这台 T8 的实测值</span></div>
+        <div class="metric"><span class="metric-value">+77.8%</span><span class="metric-label">2.5K 屏总像素增加<br>文字与代码更细腻</span></div>
+        <div class="metric"><span class="metric-value">¥542</span><span class="metric-label">都达到 32GB 后的差价<br>按 16GB 内存 742 元</span></div>
+        <div class="metric"><span class="metric-value">−¥200</span><span class="metric-label">14700HX 版本当前更便宜<br>但只有一半内存</span></div>
+      </div>
+    </div>
+
+    <section class="wrap" aria-labelledby="two-options-title">
+      <div class="section-heading">
+        <div><span class="section-kicker">01 / 先看怎么选</span><h2 id="two-options-title">不是“新 CPU 对旧 CPU”，而是两种取舍</h2></div>
+        <p>14700HX 版本把预算放在不可升级的 CPU 和屏幕上；13650HX 版本把预算放在即买即用的 32GB 内存上。</p>
+      </div>
+      <div class="grid-2">
+        <article class="card option-card recommended">
+          <span class="option-tag">A · 性能与屏幕优先</span>
+          <h3>i7-14700HX + 2.5K/180Hz</h3>
+          <div class="option-sub">16GB DDR4 · RTX 5060 · 银灰色</div>
+          <div class="option-price">¥8,992</div>
+          <span class="small">后续加 16GB 到 32GB：预计 ¥9,692–9,792</span>
+          <ul>
+            <li>适合看重代码显示、编译、多任务和四年以上使用</li>
+            <li>大一基础学习 16GB 通常够用，之后按需求升级</li>
+            <li>必须先确认原装内存排列与空槽</li>
+          </ul>
+        </article>
+        <article class="card option-card">
+          <span class="option-tag">B · 省心与内存优先</span>
+          <h3>i7-13650HX + 1200P/165Hz</h3>
+          <div class="option-sub">32GB DDR4 · RTX 5060 · 黑色</div>
+          <div class="option-price">¥9,192</div>
+          <span class="small">到手 32GB，不需要为内存立即追加预算</span>
+          <ul>
+            <li>适合虚拟机、WSL2、Docker 多开且不想拆机</li>
+            <li>1200P 对同款 RTX 5060 更友好，原生游戏帧率压力较小</li>
+            <li>多核弱一些，屏幕细腻度也低一档</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap" id="specs">
+      <div class="section-heading">
+        <div><span class="section-kicker">02 / 配置总表</span><h2>客服图中的相同与不同</h2></div>
+        <p>“内存容量”和“价格”采用你补充的待购配置；其余以两张客服图为主，CPU 核心参数用英特尔官方资料纠正。</p>
+      </div>
+      <div class="table-scroll">
+        <table class="comparison-table">
+          <thead><tr><th>项目</th><th>A · 14700HX / 2.5K</th><th>B · 13650HX / 32GB</th></tr></thead>
+          <tbody>
+            <tr><td>处理器</td><td class="win">Intel Core i7-14700HX</td><td>Intel Core i7-13650HX</td></tr>
+            <tr><td>CPU 官方核心规格</td><td class="win">20 核 28 线程：8P + 12E</td><td>14 核 20 线程：6P + 8E</td></tr>
+            <tr><td>CPU 官方最高睿频</td><td class="win">5.5GHz</td><td>4.9GHz</td></tr>
+            <tr><td>三级缓存</td><td class="win">33MB</td><td>24MB</td></tr>
+            <tr><td>客服图 CPU 性能释放</td><td class="tie">55W</td><td class="tie">55W</td></tr>
+            <tr><td>显卡</td><td class="tie">RTX 5060，客服图标注 140W</td><td class="tie">RTX 5060，客服图标注 140W</td></tr>
+            <tr><td>待购内存</td><td>16GB DDR4，2 插槽</td><td class="win">32GB DDR4，2 插槽</td></tr>
+            <tr><td>屏幕</td><td class="win">16 英寸，2560×1600，180Hz</td><td>16 英寸，1920×1200，165Hz</td></tr>
+            <tr><td>色域</td><td class="tie">100% sRGB</td><td class="tie">100% sRGB</td></tr>
+            <tr><td>重量</td><td class="win">2.45kg</td><td>2.5kg</td></tr>
+            <tr><td>电池</td><td class="tie">60Wh</td><td class="tie">60Wh</td></tr>
+            <tr><td>网络</td><td class="tie">双天线 Wi-Fi 6、千兆 RJ45、蓝牙</td><td class="tie">双天线 Wi-Fi 6、千兆 RJ45、蓝牙</td></tr>
+            <tr><td>主要接口</td><td class="tie">2×USB-A、1×USB-C、HDMI 2.1、Micro SD；无雷电/USB4</td><td class="tie">2×USB-A、1×USB-C、HDMI 2.1、Micro SD；无雷电/USB4</td></tr>
+            <tr><td>硬盘</td><td>两张截图未列出，按订单确认</td><td>两张截图未列出，按订单确认</td></tr>
+            <tr><td>系统</td><td class="tie">Windows 11，不带 Office</td><td class="tie">Windows 11，不带 Office</td></tr>
+            <tr><td>颜色</td><td>银灰色</td><td>黑色</td></tr>
+            <tr><td>当前报价</td><td class="win">¥8,992 / 16GB</td><td>¥9,192 / 32GB</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">注意：第二张客服图把 14700HX 的“处理器加速频率”也写成 4.9GHz，但英特尔官方为 5.5GHz，应以官方处理器规格为准。</p>
+    </section>
+
+    <section class="wrap" id="cpu">
+      <div class="section-heading">
+        <div><span class="section-kicker">03 / CPU 差异</span><h2>14700HX 强在“多核”，不是日常操作全都快很多</h2></div>
+        <p>多出的 2 个 P 核、4 个 E 核与 9MB 三级缓存，对编译、压缩、多开虚拟机等更有价值。</p>
+      </div>
+      <div class="grid-2">
+        <article class="card pad">
+          <h3>官方规格对照</h3>
+          <div class="spec-list">
+            <div class="spec-row"><span>核心 / 线程</span><strong>20C / 28T</strong><strong>14C / 20T</strong></div>
+            <div class="spec-row"><span>P 核 + E 核</span><strong>8 + 12</strong><strong>6 + 8</strong></div>
+            <div class="spec-row"><span>最高睿频</span><strong>5.5GHz</strong><strong>4.9GHz</strong></div>
+            <div class="spec-row"><span>E 核最高频率</span><strong>3.9GHz</strong><strong>3.6GHz</strong></div>
+            <div class="spec-row"><span>三级缓存</span><strong>33MB</strong><strong>24MB</strong></div>
+            <div class="spec-row"><span>官方基础 / 最大睿频功耗</span><strong>55W / 157W</strong><strong>55W / 157W</strong></div>
+            <div class="spec-row"><span>官方 DDR4 支持</span><strong>3200 MT/s</strong><strong>3200 MT/s</strong></div>
+          </div>
+          <p class="small">每行右侧依次对应 14700HX、13650HX。两者都支持双通道 DDR4-3200，所以这台 DDR4 机型不存在“新 CPU 就必须用 DDR5”的问题。</p>
+        </article>
+        <article class="card pad">
+          <h3>PassMark 跨机型参考</h3>
+          <div class="benchmark" aria-label="PassMark CPU Mark 对比">
+            <div class="benchmark-row"><span>14700HX</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="benchmark-score">36,382</span></div>
+            <div class="benchmark-row"><span>13650HX</span><div class="bar-track"><div class="bar-fill secondary" style="width:82.2%"></div></div><span class="benchmark-score">29,889</span></div>
+          </div>
+          <p><strong>CPU Mark：</strong>14700HX 约高 <span class="win">21.7%</span>。<br><strong>单线程：</strong>3936 对 3732，约高 <span class="win">5.5%</span>。</p>
+          <p class="small">查询于 2026-10-30；样本分别为 2157 和 3884，共 6041 份提交，数据库会每日更新。它反映不同笔记本的汇总结果，不是这两款 T8 在 55W 下的实测，不能直接当作本机跑分承诺。</p>
+        </article>
+      </div>
+      <div class="grid-2" style="margin-top:20px">
+        <div class="callout success"><strong>哪些学习场景更有感？</strong><p>大型 C/C++ 工程编译、ESP-IDF/Android Studio 构建、多虚拟机同时运行、代码压缩与数据处理，通常更能利用 14700HX 的多核优势。Keil 小程序、Python 入门、网页与文档操作，两者都能胜任，差距不会一直明显。</p></div>
+        <div class="callout"><strong>别只看“55W / 140W”标签。</strong><p>英特尔官方的 55W 是处理器基础功耗，157W 是最大睿频功耗；客服图的 55W 更像机型设定。实际性能还受 BIOS、散热和 CPU/GPU 同时负载时的功耗分配影响，不能把跨机型平均提升机械套用到这台电脑。</p></div>
+      </div>
+    </section>
+
+    <section class="wrap" id="screen">
+      <div class="section-heading">
+        <div><span class="section-kicker">04 / 屏幕差异</span><h2>真正明显的是分辨率，不是 180Hz 对 165Hz</h2></div>
+        <p>两块都是 16 英寸、16:10、100% sRGB。2.5K 屏更适合长时间看代码和小字，但游戏渲染压力也更高。</p>
+      </div>
+      <div class="card pad">
+        <div class="screen-visual">
+          <div class="screen-box"><div class="screen-ratio"><span>2560 × 1600</span></div><h3>188.7 PPI · 180Hz</h3><p>409.6 万像素 · 每帧约 5.56ms</p></div>
+          <div class="screen-box"><div class="screen-ratio"><span>1920 × 1200</span></div><h3>141.5 PPI · 165Hz</h3><p>230.4 万像素 · 每帧约 6.06ms</p></div>
+        </div>
+        <div class="grid-3">
+          <div class="callout success"><strong>学习与阅读：A 胜</strong><p>总像素多 77.8%，像素密度约高 33.3%。代码边缘、PDF 小字、原理图和网页文字更细腻，这是每天都能感受到的差异。</p></div>
+          <div class="callout"><strong>流畅度：差距较小</strong><p>180Hz 比 165Hz 仅高 9.1%，不应成为主要决策理由。两块都属于高刷屏，实际游戏体验更取决于帧率与响应时间。</p></div>
+          <div class="callout"><strong>游戏：各有取舍</strong><p>同款 RTX 5060 在原生 2.5K 下需要渲染多 77.8% 的像素，帧率压力高于 1200P。A 可配合 DLSS 或调整画质；B 更容易追求原生分辨率高帧率。</p></div>
+        </div>
+        <p class="small">高分辨率首先提升清晰度，不等于一定多显示很多内容；逻辑工作区还取决于 Windows 缩放比例。100% sRGB 也只说明色域，不代表亮度、色准、响应时间或调光方式相同。</p>
+      </div>
+      <div class="callout" style="margin-top:20px"><strong>亮度不能自行推定相同。</strong><p>快科技 2026-07-14 报道称 13650HX 的 1200P/165Hz 版本最高亮度为 500 尼特，这是第三方资料，不是你这张订单的官方实测；14700HX 的 2.5K 屏在客服图中没有亮度信息。下单前应分别询问亮度、面板类型及是否 DC 调光。</p></div>
+    </section>
+
+    <section class="wrap" id="major">
+      <div class="section-heading">
+        <div><span class="section-kicker">05 / 物联网工程专业适配</span><h2>先看内存是否够用，再看 CPU 快多少</h2></div>
+        <p>单片机程序本身不大，但电脑端的 IDE、浏览器、Linux、虚拟机和容器会共同占用内存。16GB 能入门，32GB 更适合后续综合开发。</p>
+      </div>
+      <div class="table-scroll">
+        <table class="workload-table">
+          <thead><tr><th>学习与使用场景</th><th>16GB 的 A</th><th>32GB 的 B</th><th>CPU 差异的影响</th></tr></thead>
+          <tbody>
+            <tr><td>C/Python、VS Code、Keil、Arduino、普通课程作业</td><td>通常够用</td><td>充足</td><td>小项目差距不明显</td></tr>
+            <tr><td>STM32 / ESP32、ESP-IDF、串口工具 + 大量浏览器标签</td><td>可用，多开时留意内存</td><td>更从容</td><td>大型工程构建时 A 更有优势</td></tr>
+            <tr><td>WSL2 / Linux 虚拟机 + IDE + Docker + 数据库</td><td>容易接近瓶颈，建议较早升级</td><td class="win">更合适</td><td>多服务、多系统并行时 A 更强</td></tr>
+            <tr><td>MQTT、Node-RED、网络仿真、ROS、多个虚拟机</td><td>不建议长期只靠 16GB</td><td class="win">32GB 是更稳的起点</td><td>14700HX 多核更有价值</td></tr>
+            <tr><td>Android Studio、大型 C/C++ 编译、数据处理</td><td>能运行，升级后体验更好</td><td>内存更充足</td><td class="win">A 的编译与多任务优势更明显</td></tr>
+            <tr><td>本地 AI、CUDA、视觉实验</td><td>系统内存建议 32GB</td><td>系统内存更充足</td><td>两者 RTX 5060 相同，A 不代表 GPU/显存更强</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-3" style="margin-top:20px">
+        <article class="card pad"><h3>大一不必过度焦虑</h3><p class="small">基础课程与嵌入式入门阶段，A 的 16GB 通常可以起步。不必机械地等到大二或大三，出现频繁交换内存、虚拟机分配不足时再提前升级即可。</p></article>
+        <article class="card pad"><h3>接口适合硬件实验</h3><p class="small">两款都有 RJ45，对网络课程和有线调试方便。只有 2 个 USB-A，接鼠标、开发板和串口工具后可能不够，建议预留一个可靠 USB Hub 的预算。</p></article>
+        <article class="card pad"><h3>共同短板是移动性</h3><p class="small">约 2.45–2.5kg，加电源适配器后更重；60Wh 电池搭配 HX 处理器和独显，不应期待轻薄本级续航。适合宿舍固定使用，带去教室要考虑重量与插座。</p></article>
+      </div>
+    </section>
+
+    <section class="wrap" id="cost">
+      <div class="section-heading">
+        <div><span class="section-kicker">06 / 成本核算</span><h2>按你的 700–800 元内存预算计算</h2></div>
+        <p>基准情形：A 原装是 1×16GB，空一个插槽，未来只买一条兼容的 16GB DDR4-3200 笔记本内存即可到 32GB。</p>
+      </div>
+      <div class="card calculator">
+        <div class="calculator-top">
+          <div>
+            <label class="slider-label" for="ram-price"><span>未来 16GB 内存价格</span><output class="slider-value" id="ram-price-output" for="ram-price">¥742</output></label>
+            <input id="ram-price" type="range" min="700" max="800" step="1" value="742" aria-describedby="cost-assumption">
+            <div class="range-labels"><span>¥700</span><span>¥800</span></div>
+            <div class="presets" aria-label="内存价格快捷选项">
+              <button class="preset" type="button" data-price="700" aria-pressed="false">¥700</button>
+              <button class="preset" type="button" data-price="742" aria-pressed="true">¥742</button>
+              <button class="preset" type="button" data-price="800" aria-pressed="false">¥800</button>
+            </div>
+          </div>
+          <div class="cost-result" aria-live="polite">
+            <div class="cost-number"><strong id="a-total">¥9,734</strong><span>A 升到 32GB 总成本</span></div>
+            <div class="cost-number"><strong id="cost-delta">+¥542</strong><span>相对 B 的差价</span></div>
+            <div class="cost-number"><strong id="cost-premium">5.9%</strong><span>相对 B 的溢价</span></div>
+          </div>
+        </div>
+        <p class="small" id="cost-assumption">固定价格：A = 8992 元（16GB），B = 9192 元（32GB）。未计旧内存转卖、拆装服务费、价格变化或优惠。</p>
+      </div>
+      <div class="table-scroll">
+        <table class="cost-table">
+          <thead><tr><th>16GB 内存价格</th><th>A 升级到 32GB 总价</th><th>B 已有 32GB 总价</th><th>A 比 B 贵</th></tr></thead>
+          <tbody>
+            <tr><td>¥700</td><td>¥9,692</td><td>¥9,192</td><td>¥500（约 5.4%）</td></tr>
+            <tr><td>¥742</td><td class="win">¥9,734</td><td>¥9,192</td><td class="win">¥542（约 5.9%）</td></tr>
+            <tr><td>¥800</td><td>¥9,792</td><td>¥9,192</td><td>¥600（约 6.5%）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-2" style="margin-top:20px">
+        <div class="callout success"><strong>为什么这笔差价值得？</strong><p>按 742 元计算，A 最终贵约 5.9%，换到约 21.7% 的跨机型多核跑分优势和更细腻的 2.5K 屏。CPU 与屏幕后期基本不能像内存一样低成本升级，所以更适合优先锁定。</p></div>
+        <div class="callout"><strong>742 元不能直接当成确定成本。</strong><p>这里按你的价格假设计算，不是对未来价格的保证。还必须确认你查的是笔记本 <span class="mono">SO-DIMM</span>，不是台式机 <span class="mono">DIMM</span>；优先选 DDR4-3200、1.2V、非 ECC 的 16GB 笔记本条，并核实兼容性与保修。</p></div>
+      </div>
+      <div class="callout" style="margin-top:20px"><strong>如果 A 原装是 2×8GB，上述升级账本就不成立。</strong><p>两个插槽都被占用时，不能只“加一条”到 32GB。若改成 2×16GB，按每条 742 元且不计旧条回血，总成本将变为 <strong>8992 + 1484 = 10476 元</strong>，比 B 贵 1284 元。此时更建议改选 B，或先谈妥 A 的 32GB 整机价格。</p></div>
+    </section>
+
+    <section class="wrap">
+      <div class="section-heading">
+        <div><span class="section-kicker">07 / 优缺点汇总</span><h2>把账算清，也把使用体验算进去</h2></div>
+      </div>
+      <div class="grid-2 pros-cons">
+        <article class="card">
+          <h3>A · 14700HX + 2.5K + 16GB</h3>
+          <strong class="pros">优点</strong>
+          <ul><li>多核规格与性能上限更高，适合编译和多任务</li><li>屏幕明显更细腻，长期看代码、PDF 更舒服</li><li>当前反而便宜 200 元，内存可按需后补</li><li>同为 32GB 后，500–600 元的升级溢价较合理</li></ul>
+          <strong class="cons">缺点</strong>
+          <ul><li>16GB 面对虚拟机、Docker 多开时可能较早不够</li><li>未来升级有价格、兼容性和拆机的不确定性</li><li>原生 2.5K 游戏比 1200P 更吃显卡</li><li>屏幕亮度等关键面板信息仍需确认</li></ul>
+        </article>
+        <article class="card">
+          <h3>B · 13650HX + 1200P + 32GB</h3>
+          <strong class="pros">优点</strong>
+          <ul><li>到手 32GB，适合立即运行 Linux、虚拟机和多任务</li><li>不需要为内存拆机或追加预算，省心</li><li>13650HX 对大多数课程与嵌入式开发仍然够用</li><li>1200P 更利于同款 RTX 5060 保持较高游戏帧率</li></ul>
+          <strong class="cons">缺点</strong>
+          <ul><li>多核性能较弱，重编译与多任务余量较小</li><li>141.5 PPI 的文字细腻度明显不如 2.5K</li><li>价格更高却配备较弱 CPU，优势主要集中在内存</li><li>若 32GB 是 1×32GB，还需确认是否双通道</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="section-heading">
+        <div><span class="section-kicker">08 / 最终决策</span><h2>按你的情况，这样选最明确</h2></div>
+      </div>
+      <div class="decision-list">
+        <div class="decision-item"><span>打算用四年以上，重视代码阅读、编译和后续综合开发</span><strong>选 A，之后升 32GB</strong></div>
+        <div class="decision-item"><span>当前预算严格不超过 9200 元，短期内还要加内存会很吃力</span><strong>选 B</strong></div>
+        <div class="decision-item"><span>现在就要同时开多个虚拟机，不想拆机，也不想担心兼容性</span><strong>选 B</strong></div>
+        <div class="decision-item"><span>主要玩高帧率游戏，且更在意原生分辨率下的显卡压力</span><strong>B 更省心</strong></div>
+        <div class="decision-item"><span>A 被确认是 2×8GB，或客服不愿说明插槽与保修</span><strong>改选 B / 谈 A 的 32GB 价</strong></div>
+      </div>
+      <div class="final-banner">
+        <h2>我的票投给 14700HX + 2.5K 屏</h2>
+        <p>但推荐成立的关键不是“14 代更新”，而是：确认能低成本加到 32GB 后，约 542 元差价换 CPU 与屏幕，性价比合理。</p>
+      </div>
+    </section>
+
+    <section class="wrap" id="checklist">
+      <div class="section-heading">
+        <div><span class="section-kicker">09 / 下单前核验</span><h2>把这些问题直接发给客服</h2></div>
+        <p>尽量让客服在聊天记录中书面回答，尤其是内存排列、屏幕亮度和拆机保修，这些会直接影响推荐是否成立。</p>
+      </div>
+      <div class="checklist">
+        <div class="check-item"><p><strong>“14700HX 这款 16GB 是 1×16GB 还是 2×8GB？13650HX 这款 32GB 是 2×16GB 还是 1×32GB？能否提供 CPU-Z 的 SPD/内存页面照片？”</strong></p></div>
+        <div class="check-item"><p><strong>“是否确定使用 DDR4-3200 笔记本 SO-DIMM？自行加装内存是否影响整机保修？是否建议由售后点安装，费用多少？”</strong></p></div>
+        <div class="check-item"><p><strong>“两块屏各自的典型/最高亮度是多少尼特？是否 IPS、DC 调光？2.5K 版本也是 500 尼特吗？”</strong></p></div>
+        <div class="check-item"><p><strong>“这两个订单的固态硬盘分别是什么容量、型号？内存具体品牌、频率、时序是什么？”</strong></p></div>
+        <div class="check-item"><p><strong>“单烤与双烤时 CPU/GPU 的实际功耗分别是多少？”</strong>客服图同时出现 CPU 55W、GPU 140W 和整机 90–129W，字段之间不适合直接拼成双烤功耗。</p></div>
+        <div class="check-item"><p><strong>“坏点/亮点标准、退换货条件、整机与主要部件保修时长分别是什么？”</strong>同时保存商品页、配置图与报价，避免 SKU 切换后信息不一致。</p></div>
+      </div>
+    </section>
+
+    <section class="wrap" id="sources">
+      <div class="section-heading">
+        <div><span class="section-kicker">10 / 资料与口径</span><h2>来源、日期与可信度边界</h2></div>
+        <p>检索日期：2026-10-30。价格以你的报价为准；网页商品价格会变动，因此没有替换你的订单数字。</p>
+      </div>
+      <div class="sources">
+        <div class="source"><span class="source-type">一手输入</span><strong>两张客服配置图 + 你提供的报价与内存预算</strong><p>用于确定 T8 / CV36S06、RTX 5060、DDR4 双插槽、屏幕、重量、电池、接口，以及 8992 / 9192 / 742 元和 700–800 元的成本假设。</p></div>
+        <div class="source"><span class="source-type">官方</span><a href="https://www.intel.com/content/www/us/en/products/sku/235997/intel-core-i7-processor-14700hx-33m-cache-up-to-5-50-ghz/specifications.html" target="_blank" rel="noopener noreferrer">Intel Core i7-14700HX 官方规格</a><p>20 核 28 线程、8P+12E、5.5GHz、33MB 缓存、55W 基础功耗、157W 最大睿频功耗、DDR4-3200 支持。</p></div>
+        <div class="source"><span class="source-type">官方</span><a href="https://www.intel.com/content/www/us/en/products/sku/232101/intel-core-i713650hx-processor-24m-cache-up-to-4-90-ghz/specifications.html" target="_blank" rel="noopener noreferrer">Intel Core i7-13650HX 官方规格</a><p>14 核 20 线程、6P+8E、4.9GHz、24MB 缓存、55W 基础功耗、157W 最大睿频功耗、DDR4-3200 支持。</p></div>
+        <div class="source"><span class="source-type">数据库</span><a href="https://www.cpubenchmark.net/compare/5253vs5697/Intel-i7-13650HX-vs-Intel-i7-14700HX" target="_blank" rel="noopener noreferrer">PassMark：i7-13650HX 与 i7-14700HX 对比</a><p>用于跨机型 CPU Mark 与单线程参考；不是同模具、同功耗下的控制变量测试，因此报告没有把差距描述成 T8 实测。</p></div>
+        <div class="source"><span class="source-type">第三方媒体</span><a href="https://news.mydrivers.com/1/1136/1136156.htm" target="_blank" rel="noopener noreferrer">快科技：i7-13650HX + RTX 5060 战神 T8 上新（2026-07-14）</a><p>用于交叉核对 1200P/165Hz/100% sRGB、双内存插槽等信息，并提供 500 尼特的第三方参考；不能替代本订单的面板确认。</p></div>
+        <div class="source"><span class="source-type">商品信息</span><a href="https://www.jd.com/hprm/67073b78ba88add87d7.html" target="_blank" rel="noopener noreferrer">京东神舟商品汇总页</a><p>用于确认 T8 存在 i7-13650HX / i7-14700HX + RTX 5060 的在售 SKU。汇总页包含多个店铺与版本，具体配置仍以你的订单为准。</p></div>
+      </div>
+      <div class="callout" style="margin-top:20px"><strong>为什么没有采用所有网络文章的参数？</strong><p>检索中发现 T8 同名商品存在 DDR4/DDR5、165Hz/180Hz、不同显卡与 T8 Plus 等混用。报告以你的两张对应 SKU 客服图为主，只把官方 CPU 资料和明确对应版本的第三方信息作为补充。</p></div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <p>神舟战神 T8 两款配置选购报告 · 面向物联网工程专业新生 · 生成于 2026-10-30</p>
+    <p>本页无外部字体、脚本或追踪依赖，可离线打开；价格、库存与商品参数以实际订单和客服书面确认为准。</p>
+  </footer>
+
+  <script>
+    (() => {
+      const priceA = 8992;
+      const priceB = 9192;
+      const slider = document.getElementById('ram-price');
+      const output = document.getElementById('ram-price-output');
+      const total = document.getElementById('a-total');
+      const delta = document.getElementById('cost-delta');
+      const premium = document.getElementById('cost-premium');
+      const presets = document.querySelectorAll('.preset');
+      const yuan = value => `¥${value.toLocaleString('zh-CN')}`;
+
+      function updateCost() {
+        const ramPrice = Number(slider.value);
+        const totalA = priceA + ramPrice;
+        const difference = totalA - priceB;
+        output.textContent = yuan(ramPrice);
+        total.textContent = yuan(totalA);
+        delta.textContent = `+${yuan(difference)}`;
+        premium.textContent = `${(difference / priceB * 100).toFixed(1)}%`;
+        presets.forEach(button => {
+          button.setAttribute('aria-pressed', String(Number(button.dataset.price) === ramPrice));
+        });
+      }
+
+      slider.addEventListener('input', updateCost);
+      presets.forEach(button => {
+        button.addEventListener('click', () => {
+          slider.value = button.dataset.price;
+          updateCost();
+        });
+      });
+      updateCost();
+    })();
+  </script>
+</body>
+</html>

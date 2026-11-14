@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MacBook 磁盘空间审计 · 本地占用可视化</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#1c2330; --line:#2a3240;
+    --fg:#e6edf3; --fg2:#9aa7b4; --fg3:#6b7889;
+    --blue:#4c8dff; --green:#3fb950; --amber:#d29922; --red:#f85149;
+    --purple:#a371f7; --cyan:#39c5cf; --pink:#f778ba; --orange:#ff9e64;
+    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--fg);
+    font:14px/1.6 -apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1360px;margin:0 auto;padding:0 24px 100px}
+
+  /* ---------- header ---------- */
+  header{
+    background:linear-gradient(160deg,#132033 0%,#0d1117 70%);
+    border-bottom:1px solid var(--line);padding:34px 0 26px;margin-bottom:28px;
+  }
+  header .wrap{padding-bottom:0}
+  h1{margin:0 0 6px;font-size:25px;font-weight:650;letter-spacing:.3px}
+  .sub{color:var(--fg2);font-size:13px}
+  .sub code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:12px;color:var(--cyan)}
+  .banner{
+    margin-top:18px;display:flex;gap:10px;align-items:flex-start;
+    background:rgba(248,81,73,.09);border:1px solid rgba(248,81,73,.35);
+    border-radius:8px;padding:11px 14px;color:#ffb4ae;font-size:12.5px;max-width:920px;
+  }
+  .banner b{color:#ff8b82}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;background:rgba(13,17,23,.93);
+    backdrop-filter:blur(14px);border-bottom:1px solid var(--line);margin-bottom:26px}
+  nav .wrap{padding:9px 24px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  nav a{color:var(--fg2);text-decoration:none;font-size:12.5px;padding:5px 11px;border-radius:6px;transition:.15s}
+  nav a:hover{background:var(--bg3);color:var(--fg)}
+  nav .spacer{flex:1}
+  nav .tag{font-family:var(--mono);font-size:11px;color:var(--fg3)}
+
+  /* ---------- section ---------- */
+  section{margin-bottom:44px;scroll-margin-top:60px}
+  h2{font-size:18px;margin:0 0 4px;font-weight:620;display:flex;align-items:center;gap:9px}
+  h2 .n{font-family:var(--mono);color:var(--blue);font-size:13px;background:rgba(76,141,255,.12);
+    padding:1px 8px;border-radius:5px;border:1px solid rgba(76,141,255,.25)}
+  .lead{color:var(--fg2);font-size:13px;margin:0 0 16px}
+
+  /* ---------- kpi ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin-bottom:22px}
+  .kpi{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .kpi .l{font-size:11.5px;color:var(--fg3);text-transform:uppercase;letter-spacing:.7px}
+  .kpi .v{font-size:25px;font-weight:660;font-family:var(--mono);margin:5px 0 2px;letter-spacing:-.5px}
+  .kpi .s{font-size:11.5px;color:var(--fg2)}
+  .kpi.good .v{color:var(--green)} .kpi.warn .v{color:var(--amber)} .kpi.bad .v{color:var(--red)}
+  .kpi.info .v{color:var(--blue)} .kpi.pur .v{color:var(--purple)}
+
+  /* ---------- donut ---------- */
+  .panel{background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:18px}
+  .grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:16px}
+  @media(max-width:940px){.grid2{grid-template-columns:1fr}}
+
+  /* ---------- bars ---------- */
+  .bar-row{display:grid;grid-template-columns:minmax(104px,190px) minmax(48px,1fr) max-content;
+    gap:11px;align-items:center;margin-bottom:7px;font-size:12.5px}
+  .bar-row .lb{color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .bar-track{display:block;height:19px;background:var(--bg3);border-radius:4px;overflow:hidden;min-width:0}
+  .bar-fill{display:block;height:100%;border-radius:4px;transition:width .9s cubic-bezier(.2,.8,.25,1)}
+  .bar-row .vl{font-family:var(--mono);text-align:right;color:var(--fg);font-size:12px;white-space:nowrap}
+
+  /* ---------- treemap ---------- */
+  .tm{display:flex;flex-wrap:wrap;gap:3px;height:330px;border-radius:9px;overflow:hidden;border:1px solid var(--line)}
+  .tm-item{position:relative;overflow:hidden;border-radius:4px;padding:8px 10px;cursor:default;
+    transition:transform .15s, filter .15s;min-width:56px}
+  .tm-item:hover{filter:brightness(1.22);z-index:2;transform:scale(1.012)}
+  .tm-item .t{font-size:11.5px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.65);line-height:1.25;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tm-item .s{font-family:var(--mono);font-size:10.5px;opacity:.9;text-shadow:0 1px 3px rgba(0,0,0,.65);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tm-item.sm .t{font-size:10.5px} .tm-item.sm .s{font-size:9.5px}
+  .tm-item.xs .t{font-size:9.5px} .tm-item.xs .s{display:none}
+
+  /* ---------- cards ---------- */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:16px 18px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+  .card.c-a::before{background:var(--green)} .card.c-b::before{background:var(--cyan)}
+  .card.c-c::before{background:var(--amber)} .card.c-d::before{background:var(--blue)}
+  .card.c-e::before{background:var(--red)}
+  .card h3{margin:0 0 3px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .card .big{font-family:var(--mono);font-size:23px;font-weight:660;margin:7px 0 2px}
+  .card .desc{color:var(--fg2);font-size:12.5px;margin-bottom:11px}
+  .card ul{margin:0;padding-left:17px;color:var(--fg2);font-size:12.5px}
+  .card li{margin-bottom:5px}
+  .card code,.tbl code{font-family:var(--mono);font-size:11.5px;background:var(--bg3);padding:1px 5px;border-radius:3px;color:#a5d6ff}
+  .pill{display:inline-block;font-size:10.5px;padding:1px 8px;border-radius:20px;font-weight:600;letter-spacing:.3px}
+  .p-safe{background:rgba(63,185,80,.15);color:#56d364;border:1px solid rgba(63,185,80,.3)}
+  .p-regen{background:rgba(57,197,207,.14);color:#56d4dd;border:1px solid rgba(57,197,207,.3)}
+  .p-check{background:rgba(210,153,34,.15);color:#e3b341;border:1px solid rgba(210,153,34,.3)}
+  .p-move{background:rgba(76,141,255,.15);color:#79b8ff;border:1px solid rgba(76,141,255,.3)}
+  .p-keep{background:rgba(248,81,73,.13);color:#ff7b72;border:1px solid rgba(248,81,73,.28)}
+
+  /* ---------- table ---------- */
+  .toolbar{display:flex;gap:9px;align-items:center;margin-bottom:11px;flex-wrap:wrap}
+  input[type=search],select{
+    background:var(--bg3);border:1px solid var(--line);color:var(--fg);padding:7px 11px;
+    border-radius:7px;font-size:12.5px;font-family:inherit;outline:none
+  }
+  input[type=search]{min-width:250px}
+  input[type=search]:focus,select:focus{border-color:var(--blue)}
+  select{cursor:pointer}
+  .tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+  .tbl th{
+    text-align:left;padding:9px 11px;background:var(--bg3);color:var(--fg2);font-weight:600;
+    font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;white-space:nowrap;
+    border-bottom:1px solid var(--line);position:sticky;top:0;user-select:none
+  }
+  .tbl th:hover{color:var(--fg)}
+  .tbl th .ar{color:var(--blue);font-size:10px}
+  .tbl td{padding:8px 11px;border-bottom:1px solid rgba(42,50,64,.55);vertical-align:top}
+  .tbl tr:hover td{background:rgba(76,141,255,.045)}
+  .tbl .sz{font-family:var(--mono);text-align:right;white-space:nowrap;font-weight:600}
+  .tbl .pth{font-family:var(--mono);font-size:11.5px;color:var(--fg2);word-break:break-all}
+  .tbl-wrap{max-height:660px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+  .cnt{color:var(--fg3);font-size:12px;font-family:var(--mono)}
+
+  /* ---------- command ---------- */
+  .cmd{background:#0a0e14;border:1px solid var(--line);border-radius:8px;padding:11px 13px;
+    font-family:var(--mono);font-size:11.5px;color:#a5d6ff;white-space:pre-wrap;overflow-wrap:anywhere;
+    margin:9px 0 0;position:relative}
+  .cmd .c{color:var(--fg3)}
+  .copy{position:absolute;top:6px;right:6px;background:var(--bg3);border:1px solid var(--line);
+    color:var(--fg2);border-radius:5px;font-size:10px;padding:2px 7px;cursor:pointer;font-family:var(--mono)}
+  .copy:hover{color:var(--fg);border-color:var(--blue)}
+
+  /* ---------- notes ---------- */
+  .note{background:rgba(210,153,34,.07);border:1px solid rgba(210,153,34,.28);border-radius:9px;
+    padding:13px 16px;font-size:12.5px;color:#e3c37a;margin-top:14px}
+  .note b{color:#f0d08a}
+  .note.blue{background:rgba(76,141,255,.07);border-color:rgba(76,141,255,.28);color:#a5cdff}
+  .note.blue b{color:#79b8ff}
+  .note.green{background:rgba(63,185,80,.07);border-color:rgba(63,185,80,.28);color:#9dd8a6}
+  .note.green b{color:#56d364}
+
+  /* ---------- cowork ---------- */
+  .cw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:11px;margin-bottom:16px}
+  .cw-box{background:var(--bg3);border:1px solid var(--line);border-radius:9px;padding:13px 15px}
+  .cw-box .l{font-size:11px;color:var(--fg3);text-transform:uppercase;letter-spacing:.6px}
+  .cw-box .v{font-family:var(--mono);font-size:20px;font-weight:660;margin:4px 0 1px}
+  .cw-box .s{font-size:11px;color:var(--fg2)}
+
+  footer{border-top:1px solid var(--line);margin-top:50px;padding-top:20px;color:var(--fg3);font-size:12px}
+  footer code{font-family:var(--mono);color:var(--fg2)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>MacBook 本地磁盘占用审计</h1>
+    <div class="sub">扫描时间 <code>2026-11-04 09:36 CST</code> · 主机 <code>yuumix 的 MacBook Pro</code> · 范围 <code>除 iCloud 云端外的全部本地数据</code></div>
+    <div class="banner">
+      <span>🔒</span>
+      <div><b>本次为纯只读审计。</b>所有数据通过 <code>du</code> / <code>df</code> / <code>find</code> / <code>stat</code> 采集，未执行任何删除、移动或修改操作。下方命令仅为<b>建议清单</b>，需你确认后自行执行。</div>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="wrap">
+    <a href="#overview">总览</a>
+    <a href="#treemap">占用分布</a>
+    <a href="#plan">清理方案</a>
+    <a href="#cowork">Cowork 专项</a>
+    <a href="#catalog">全量目录</a>
+    <a href="#cmd">命令清单</a>
+    <span class="spacer"></span>
+    <span class="tag">df · du · find · stat</span>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ============ OVERVIEW ============ -->
+<section id="overview">
+  <h2><span class="n">01</span>总览</h2>
+  <p class="lead">内置 SSD 已被系统性占满，剩余空间不足以支撑一次 Unity 库重建。外接盘 <code>/Volumes/KESU</code> 挂载正常、可写、几乎全空，是现成的迁移落点。</p>
+
+  <div class="kpis">
+    <div class="kpi bad">
+      <div class="l">内置 SSD 容量</div>
+      <div class="v">460 Gi</div>
+      <div class="s">/dev/disk3s5 · APFS 容器</div>
+    </div>
+    <div class="kpi bad">
+      <div class="l">已用</div>
+      <div class="v">386 Gi</div>
+      <div class="s">占 89% · iused 4.1M</div>
+    </div>
+    <div class="kpi warn">
+      <div class="l">可用</div>
+      <div class="v">50 Gi</div>
+      <div class="s">仅够 1–2 次 Unity Library 重建</div>
+    </div>
+    <div class="kpi good">
+      <div class="l">外接盘 KESU 可用</div>
+      <div class="v">465 Gi</div>
+      <div class="s">/dev/disk5s1 · 已挂载 · 可写</div>
+    </div>
+    <div class="kpi info">
+      <div class="l">可安全回收</div>
+      <div class="v">62.5 GB</div>
+      <div class="s">纯缓存 / 日志，删后自动重建</div>
+    </div>
+    <div class="kpi info">
+      <div class="l">可再生回收</div>
+      <div class="v">36.3 GB</div>
+      <div class="s">Library + UnityInsight 索引</div>
+    </div>
+    <div class="kpi warn">
+      <div class="l">旧版本可卸载</div>
+      <div class="v">36 GB</div>
+      <div class="s">2 个 Tuanjie 版本无项目引用</div>
+    </div>
+    <div class="kpi pur">
+      <div class="l">可迁移到 KESU</div>
+      <div class="v">56.7 GB</div>
+      <div class="s">录屏 / 游戏 / 下载 / 桌面 / 源码</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h3 style="margin:0 0 14px;font-size:13.5px;color:var(--fg2);font-weight:600">内置 SSD 使用率</h3>
+      <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+        <svg width="190" height="190" viewBox="0 0 190 190" role="img" aria-label="磁盘使用率环形图">
+          <circle cx="95" cy="95" r="74" fill="none" stroke="#1c2330" stroke-width="22"/>
+          <circle cx="95" cy="95" r="74" fill="none" stroke="#f85149" stroke-width="22"
+            stroke-dasharray="465 465" stroke-dashoffset="53.5" stroke-linecap="butt"
+            transform="rotate(-90 95 95)"/>
+          <text x="95" y="87" text-anchor="middle" fill="#e6edf3" font-size="27" font-weight="660" font-family="ui-monospace,monospace">89%</text>
+          <text x="95" y="109" text-anchor="middle" fill="#6b7889" font-size="11.5" font-family="ui-monospace,monospace">386 / 460 Gi</text>
+        </svg>
+        <div style="flex:1;min-width:150px">
+          <div class="bar-row"><span class="lb">已用（用户数据）</span>
+            <span class="bar-track"><span class="bar-fill" style="width:83.9%;background:linear-gradient(90deg,#f85149,#ff7b72)"></span></span>
+            <span class="vl">386 Gi</span></div>
+          <div class="bar-row"><span class="lb">其中 /Users</span>
+            <span class="bar-track"><span class="bar-fill" style="width:45.7%;background:var(--blue)"></span></span>
+            <span class="vl">210 G</span></div>
+          <div class="bar-row"><span class="lb">其中 /Applications</span>
+            <span class="bar-track"><span class="bar-fill" style="width:22.4%;background:var(--purple)"></span></span>
+            <span class="vl">103 G</span></div>
+          <div class="bar-row"><span class="lb">其余系统卷</span>
+            <span class="bar-track"><span class="bar-fill" style="width:3.2%;background:var(--fg3)"></span></span>
+            <span class="vl">21 G</span></div>
+          <div style="margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-size:11.5px;color:var(--fg3)">
+            iCloud 本地占用仅 <b style="color:var(--fg2)">39 MB</b>，本报告已排除该维度。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin:0 0 14px;font-size:13.5px;color:var(--fg2);font-weight:600">/System/Volumes/Data 顶层分布（单位 GB）</h3>
+      <div id="top-bars"></div>
+      <div class="note blue" style="margin-top:14px">
+        <b>结论：</b>占用主体是 <code>/Users</code>（210 G）与 <code>/Applications</code>（103 G）两段，二者合计占已用空间的 81%。
+        系统卷（<code>/private</code> 6.7 G、<code>/Library</code> 4.2 G、<code>/opt</code> 3.5 G）属系统托管，<b>不可动</b>。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TREEMAP ============ -->
+<section id="treemap">
+  <h2><span class="n">02</span>占用分布</h2>
+  <p class="lead">主目录 <code>~</code> 共 <b>209 GB</b>。方块面积与实际体积成正比，悬停可查看完整路径。</p>
+
+  <div class="panel" style="margin-bottom:16px">
+    <h3 style="margin:0 0 12px;font-size:13.5px;color:var(--fg2);font-weight:600">主目录一级分布 · ~/</h3>
+    <div class="tm" id="tm-home"></div>
+    <div style="margin-top:10px;font-size:11.5px;color:var(--fg3)">
+      灰色为剩余小项合计（各 &lt; 200 MB，共约 1.5 GB）
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h3 style="margin:0 0 12px;font-size:13.5px;color:var(--fg2);font-weight:600">~/Library 明细（88 GB）</h3>
+      <div id="lib-bars"></div>
+    </div>
+    <div class="panel">
+      <h3 style="margin:0 0 12px;font-size:13.5px;color:var(--fg2);font-weight:600">编辑器安装体积（80 GB）</h3>
+      <div id="ed-bars"></div>
+      <div class="note" style="margin-top:14px">
+        <b>版本引用已交叉验证：</b>读取各项目 <code>ProjectSettings/ProjectVersion.txt</code>，确认
+        <code>2022.3.62t16</code> 与 <code>2022.3.61t14</code> <b>无任何项目引用</b>，可安全卸载；
+        其余 3 个版本分别被 5 / 2 / 2 个项目使用，<b>必须保留</b>。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLAN ============ -->
+<section id="plan">
+  <h2><span class="n">03</span>清理方案</h2>
+  <p class="lead">按<b>风险从低到高</b>分五级。A/B 级可直接清理，C 级需在 Hub 内卸载，D 级是迁移而非删除，E 级永不动。</p>
+
+  <div class="cards">
+    <div class="card c-a">
+      <h3><span class="pill p-safe">A 级 · 安全</span> 缓存与日志</h3>
+      <div class="big" style="color:var(--green)">62.5 GB</div>
+      <div class="desc">纯派生数据，删除后应用自动重建，不影响任何工作成果。</div>
+      <ul>
+        <li>JetBrains Toolbox 备份 + 下载包 <b>8.4 G</b>（含 2.0 G 的 Rider dmg）</li>
+        <li>Rider <code>acp-agents</code> 缓存 <b>7.0 G</b></li>
+        <li>Tabbit Browser Service Worker 缓存 <b>9.1 G</b></li>
+        <li>飞书内置浏览器 Service Worker 缓存 <b>2.5 G</b>（<code>LarkShell/aha/.../profile_explorer</code>，仅缓存部分）</li>
+        <li>Tuanjie / Unity 包缓存 <b>13.2 G</b>（<code>cache/packages</code> + <code>cache/npm</code>）</li>
+        <li>飞书更新包 <b>2.1 G</b>、Telegram <b>2.9 G</b>、微信 <b>1.9 G</b>、Tabbit 缓存 <b>1.9 G</b></li>
+        <li>各 App 自动更新包 <b>2.7 G</b>（qoder / hilo / mmx / craft / xiaohei）</li>
+        <li>Homebrew 下载缓存 <b>952 M</b>、Playwright 浏览器 <b>554 M</b></li>
+        <li>日志：<code>~/.codely/logs</code> 1.3 G、<code>~/.junie/logs</code> 1.2 G、<code>~/Library/Logs</code> 640 M</li>
+        <li>VSCode 已下载扩展包 804 M、Cindy Cache 435 M、WorkBuddy 迁移缓存 960 M</li>
+      </ul>
+      <div class="note" style="margin-top:10px;font-size:11.5px">
+        <b>注意：</b>飞书 <code>LarkShell/aha</code> 目录内的 <code>morpheus</code>（消息数据库）与
+        <code>IndexedDB</code> / <code>Local Storage</code> / <code>History</code> 是<b>真实用户数据</b>，
+        只清 <code>Service Worker</code> 子目录。
+      </div>
+    </div>
+
+    <div class="card c-b">
+      <h3><span class="pill p-regen">B 级 · 可再生</span> Unity Library 与索引</h3>
+      <div class="big" style="color:var(--cyan)">36.3 GB</div>
+      <div class="desc">Unity 项目的 <code>Library/</code> 与 UnityInsight 索引。首次打开项目会自动重建，代价是几分钟到几十分钟。</div>
+      <ul>
+        <li>9 个项目 <code>Library/</code> 合计 <b>32.7 G</b>（RTT 8.3 G、ElementMystery 7.2 G、Tuanjie2DProject 3.5 G…）</li>
+        <li>其中内嵌 UnityInsight 索引 <b>5.8 G</b></li>
+        <li>项目根 <code>.codely-cli/UnityInsight/</code> 独立索引 <b>3.6 G</b>（RTT 1.8 G 为主）</li>
+        <li><code>obj/</code> <code>Logs/</code> <code>UserSettings/</code> 合计约 40 M</li>
+      </ul>
+      <div class="note" style="margin-top:10px;font-size:11.5px">
+        <b>提示：</b>库重建期间需要额外磁盘写入，<b>务必先腾出空间再删</b>，否则 Unity 会因磁盘满而半途失败。
+      </div>
+    </div>
+
+    <div class="card c-c">
+      <h3><span class="pill p-check">C 级 · 需确认</span> 旧版编辑器</h3>
+      <div class="big" style="color:var(--amber)">36 GB</div>
+      <div class="desc">同一大版本下的历史补丁版本，项目未引用。必须在 Tuanjie Hub / Unity Hub 内卸载，不要直接 <code>rm</code> 目录。<br><span style="color:var(--fg3);font-size:11.5px">该分类下编辑器总占用 78.7 GB，其中 <b style="color:var(--amber)">仅 36 GB 可卸载</b>，其余 42.7 GB 已被项目引用。</span></div>
+      <ul>
+        <li>Tuanjie <code>2022.3.62t16</code> — <b>21 G</b> — 无项目引用</li>
+        <li>Tuanjie <code>2022.3.61t14</code> — <b>15 G</b> — 无项目引用</li>
+        <li><span style="color:var(--fg3)">Tuanjie <code>2022.3.62t17</code> 23 G — PeekOutside / Tuanjie2DProject 在用，保留</span></li>
+        <li><span style="color:var(--fg3)">Unity <code>2022.3.62f3c1</code> 11 G — 5 个项目在用，保留</span></li>
+        <li><span style="color:var(--fg3)">Unity <code>2021.3.45f2c1</code> 8.7 G — 2 个项目在用，保留</span></li>
+      </ul>
+    </div>
+
+    <div class="card c-d">
+      <h3><span class="pill p-move">D 级 · 迁移</span> 搬到 KESU</h3>
+      <div class="big" style="color:var(--blue)">56.7 GB</div>
+      <div class="desc">内容本身有价值，只是不该占工作机。KESU 有 <b>465 Gi</b> 空闲空间。</div>
+      <ul>
+        <li>Steam 游戏库 <b>11.1 G</b>（Silksong 7.7 G / Minishoot 1.5 G / Celeste 1.1 G / LONESTAR 829 M）— Steam 内改库路径</li>
+        <li>FocuSee 录屏工程 <b>7.1 G</b> + 剪映草稿 <b>794 M</b></li>
+        <li>各 Unity 项目 <code>Assets/</code> 源文件 <b>约 26 G</b>（不含 Library）</li>
+        <li><code>~/Downloads</code> <b>6.2 G</b>（含 4.6 G 仓库备份、多个 dmg/zip 安装包）</li>
+        <li><code>~/Desktop</code> <b>4.5 G</b>（边际棋盘 1.6 G + 重复的 656 M zip）</li>
+        <li><code>~/Documents</code> <b>976 M</b></li>
+      </ul>
+    </div>
+
+    <div class="card c-e">
+      <h3><span class="pill p-keep">E 级 · 必须留本地</span></h3>
+      <div class="big" style="color:var(--red)">不可迁移</div>
+      <div class="desc">系统与应用运行依赖项，移走会导致功能异常。</div>
+      <ul>
+        <li>当前活跃编辑器 Tuanjie <code>2022.3.62t17</code>（23 G）、Unity <code>2022.3.62f3c1</code>（11 G）、Unity <code>2021.3.45f2c1</code>（8.7 G）</li>
+        <li>正在开发的项目：RTT、PeekOutside、AesirFramework、AesirInspector、Tuanjie2DProject</li>
+        <li><code>/Applications</code> 下全部应用（含 <code>Tuanjie Cowork.app</code> 603 M）</li>
+        <li>Homebrew <code>/opt/homebrew</code> 3.5 G、<code>~/.dotnet</code> 1.7 G、<code>~/.nvm</code> 321 M、<code>~/.cargo</code> 188 M</li>
+        <li>系统托管卷：<code>/private/var/db</code> 2.4 G、<code>/private/var/folders</code> 2.2 G、<code>/Library</code> 4.2 G</li>
+        <li>Git 仓库与工作树（<code>~/Projects</code>、<code>~/Downloads/00-yuumix-repo</code>）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note green" style="margin-top:16px">
+    <b>回收总账：</b>A 级 62.5 G + B 级 36.3 G + C 级可卸载 36 G = <b>134.8 GB</b> 直接释放，
+    加上 D 级迁移 56.7 G，合计可腾出 <b>191.5 GB</b>。
+    可用空间将从 <b>50 Gi → 约 175 Gi</b>，占满率从 89% 降至约 <b>57%</b>。
+  </div>
+</section>
+
+<!-- ============ COWORK ============ -->
+<section id="cowork">
+  <h2><span class="n">04</span>Cowork 相关文件专项</h2>
+  <p class="lead">
+    Tuanjie Cowork 的 bundle id 为 <code>dev.codelycowork.desktop</code>。其数据分散在<b>四个不同位置</b>：
+    应用本体、<code>Application Support</code> 里的运行时、<code>~/Library/Caches</code> 里的 Web 缓存，
+    以及 <code>~/.codely</code> / <code>~/.codely-cli</code> 里的配置与<b>会话历史</b>。
+  </p>
+
+  <div class="cw-grid">
+    <div class="cw-box">
+      <div class="l">Cowork 应用本体</div>
+      <div class="v" style="color:var(--blue)">603 M</div>
+      <div class="s">/Applications/Tuanjie Cowork.app</div>
+    </div>
+    <div class="cw-box">
+      <div class="l">内置运行时</div>
+      <div class="v" style="color:var(--purple)">268 M</div>
+      <div class="s">~/Library/Application Support/Tuanjie Cowork/bin</div>
+    </div>
+    <div class="cw-box">
+      <div class="l">Web 缓存（可清）</div>
+      <div class="v" style="color:var(--green)">71.9 M</div>
+      <div class="s">Caches 70 M + WebKit 1.9 M</div>
+    </div>
+    <div class="cw-box">
+      <div class="l">运行日志（可清）</div>
+      <div class="v" style="color:var(--amber)">456 M</div>
+      <div class="s">~/.codely/logs/cowork-*.log × 118</div>
+    </div>
+    <div class="cw-box">
+      <div class="l">会话历史（工作数据）</div>
+      <div class="v" style="color:var(--red)">20.19 G</div>
+      <div class="s">~/.codely-cli/tmp/*/chats</div>
+    </div>
+    <div class="cw-box">
+      <div class="l">项目侧索引（可再生）</div>
+      <div class="v" style="color:var(--cyan)">3.58 G</div>
+      <div class="s">各项目 .codely-cli/UnityInsight</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:14px;margin:20px 0 10px;color:var(--fg)">完整落点清单（逐文件核对）</h3>
+  <div class="tbl-wrap">
+    <table class="tbl" id="tbl-cowork">
+      <thead><tr>
+        <th data-k="path">路径</th>
+        <th data-k="size" class="sz">体积</th>
+        <th data-k="role">性质</th>
+        <th data-k="action">建议动作</th>
+        <th data-k="note">说明</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="note" style="margin-top:14px">
+    <b>关于 20.19 GB 会话历史：</b>分布在 31 个 tmp 工作区目录中，按月统计为
+    <b>2026-10 占 13.9 GB</b>、<b>2026-11 占 2.5 GB</b>、8–9 月合计约 1.0 GB，其余为零星小目录。
+    两个活跃工作区（<code>018d4d12…</code> 12 G / <code>24e3f8a8…</code> 7.0 G）今天仍在写入。
+    <b>这属于工作成果而非缓存</b>，建议按「保留近 30 天 + 旧会话整体归档到 KESU」处理，不要直接删除。
+  </div>
+
+  <div class="note blue">
+    <b>可行的折中方案：</b>把 <code>~/.codely-cli/tmp/&lt;hash&gt;/chats</code> 下 <b>30 天前</b>的
+    <code>.jsonl</code> 打包（<code>tar -czf</code>）迁到 <code>/Volumes/KESU/Archive/codely-chats/</code>，
+    保留最近 30 天在本地。这样能释放约 <b>13.9 GB</b> 而不丢失任何历史记录。
+  </div>
+</section>
+
+<!-- ============ CATALOG ============ -->
+<section id="catalog">
+  <h2><span class="n">05</span>全量目录明细</h2>
+  <p class="lead">所有扫描到的占用项。可按分级筛选或搜索路径。</p>
+
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="搜索路径或说明…">
+    <select id="f">
+      <option value="">全部分级</option>
+      <option value="A">A 级 · 安全清理</option>
+      <option value="B">B 级 · 可再生</option>
+      <option value="C">C 级 · 需确认</option>
+      <option value="D">D 级 · 可迁移</option>
+      <option value="E">E 级 · 必须保留</option>
+    </select>
+    <span class="cnt" id="cnt"></span>
+  </div>
+
+  <div class="tbl-wrap">
+    <table class="tbl" id="tbl-all">
+      <thead><tr>
+        <th data-k="path">路径</th>
+        <th data-k="size" class="sz">体积</th>
+        <th data-k="grade">分级</th>
+        <th data-k="desc">说明</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ CMD ============ -->
+<section id="cmd">
+  <h2><span class="n">06</span>建议命令清单</h2>
+  <p class="lead">以下命令<b>本次未执行</b>。请逐条确认后再手动运行，尤其 B 级删库前务必确保已腾出足够空间。</p>
+
+  <div class="grid2">
+    <div class="panel">
+      <h3 style="margin:0 0 4px;font-size:13.5px;color:var(--green)">A 级 · 缓存与日志</h3>
+      <div class="cmd"><button class="copy">复制</button><span class="c"># 先看每项体积，确认后再删</span>
+du -sh ~/Library/Caches/JetBrains/Toolbox/{backup,download}
+du -sh ~/Library/Caches/JetBrains/Rider2026.2/acp-agents
+du -sh "$HOME/Library/Application Support/Tabbit Browser/Default/Service Worker"
+du -sh ~/Library/{Tuanjie,Unity}/cache
+du -sh "$HOME/Library/Application Support/LarkShell/update"
+du -sh "$HOME/Library/Application Support/LarkShell/aha/users/"*/profile_explorer/"Service Worker"
+du -sh ~/Library/Caches/{ru.keepcoder.Telegram,com.tencent.xinWeChat,"Tabbit Browser"}
+du -sh ~/Library/Caches/*updater* ~/Library/Caches/@*updater*
+du -sh ~/Library/Caches/{Homebrew,ms-playwright}
+du -sh "$HOME/Library/Application Support/Cindy/Cache"
+du -sh "$HOME/Library/Application Support/Code/CachedExtensionVSIXs"
+
+<span class="c"># 确认后执行（缓存删后自动重建）</span>
+rm -rf ~/Library/Caches/JetBrains/Toolbox/{backup,download}
+rm -rf ~/Library/Caches/JetBrains/Rider2026.2/acp-agents
+rm -rf "$HOME/Library/Application Support/Tabby Browser/Default/Service Worker"
+rm -rf ~/Library/{Tuanjie,Unity}/cache
+rm -rf "$HOME/Library/Application Support/LarkShell/update"
+<span class="c"># 飞书：只删 Service Worker 缓存，同级 morpheus / IndexedDB 是用户数据，勿动</span>
+rm -rf "$HOME/Library/Application Support/LarkShell/aha/users/"*/profile_explorer/"Service Worker"
+rm -rf ~/Library/Caches/ru.keepcoder.Telegram
+rm -rf ~/Library/Caches/com.tencent.xinWeChat
+rm -rf "$HOME/Library/Caches/Tabbit Browser"
+rm -rf ~/Library/Caches/{qoder-cn-updater,@hilodesktop-updater,@mmx-agentelectron-updater,@craft-agentelectron-updater,xiaohei-daily-assistant-updater}
+rm -rf ~/Library/Caches/{Homebrew,ms-playwright}
+rm -rf "$HOME/Library/Application Support/Cindy/Cache"
+rm -rf "$HOME/Library/Application Support/Code/CachedExtensionVSIXs"
+
+<span class="c"># 日志（保留最近 7 天）</span>
+find ~/.codely/logs ~/.junie/logs ~/Library/Logs -type f -name '*.log*' -mtime +7 -delete</div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin:0 0 4px;font-size:13.5px;color:var(--cyan)">B 级 · Unity 库与索引</h3>
+      <div class="cmd"><button class="copy">复制</button><span class="c"># 建议逐个项目处理，先删冷门项目</span>
+du -sh ~/Projects/*/*/Library
+du -sh ~/Projects/*/*/.codely-cli/UnityInsight
+
+<span class="c"># 删项目 Library（Unity 打开项目时自动重建）</span>
+rm -rf ~/Projects/Unity/OdinInspectorSources/Library
+rm -rf ~/Projects/Unity/LocalizationDemo/Library
+rm -rf ~/Projects/Unity/EventModule/Library
+rm -rf ~/Projects/Unity/AesirInspector/Library
+rm -rf ~/Projects/Unity/AesirFramework/Library
+
+<span class="c"># 删 UnityInsight 索引（重建需时）</span>
+find ~/Projects -type d -name UnityInsight -prune -exec rm -rf {} +
+
+<span class="c"># 顺带清理零散产物</span>
+find ~/Projects -maxdepth 3 -type d \( -name Logs -o -name obj \) -prune -exec rm -rf {} +</div>
+
+      <h3 style="margin:20px 0 4px;font-size:13.5px;color:var(--amber)">C 级 · 在 Hub 内卸载旧编辑器</h3>
+      <div class="cmd"><button class="copy">复制</button><span class="c"># 务必走 Hub 图形界面卸载，勿直接 rm 目录</span>
+<span class="c"># Tuanjie Hub → Editor → 卸载 2022.3.62t16 (21 G) 与 2022.3.61t14 (15 G)</span>
+<span class="c"># 保留 2022.3.62t17 (23 G)：PeekOutside / Tuanjie2DProject 在用</span>
+<span class="c"># Unity Hub 三个版本全部有项目引用，勿动</span></div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin:0 0 4px;font-size:13.5px;color:var(--blue)">D 级 · 迁移到 KESU</h3>
+      <div class="cmd"><button class="copy">复制</button>mkdir -p /Volumes/KESU/{Media,Games,Archive,Projects}
+rsync -a --info=progress2 ~/Movies/ /Volumes/KESU/Media/
+rsync -a --info=progress2 ~/Documents/ /Volumes/KESU/Media/
+rsync -a --info=progress2 ~/Desktop/ /Volumes/KESU/Media/Desktop/
+rsync -a --info=progress2 ~/Downloads/ /Volumes/KESU/Archive/Downloads/
+
+<span class="c"># 校验一致后再删源（du 对比体积）</span>
+du -sh ~/Movies /Volumes/KESU/Media
+
+<span class="c"># Steam 游戏库：在 Steam → 设置 → 存储空间 → 更改库路径</span>
+<span class="c"># 直接改 libraryfolders.vdf 亦可，但建议走 UI</span></div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin:0 0 4px;font-size:13.5px;color:var(--green)">Cowork 专项</h3>
+      <div class="cmd"><button class="copy">复制</button><span class="c"># 1) 旧日志（118 个文件 / 456 MB）</span>
+du -ch ~/.codely/logs/cowork-*.log | tail -1
+find ~/.codely/logs -name 'cowork-*.log' -mtime +14 -delete
+
+<span class="c"># 2) Web 缓存</span>
+rm -rf ~/Library/Caches/dev.codelycowork.desktop
+rm -rf ~/Library/WebKit/dev.codelycowork.desktop
+
+<span class="c"># 3) 归档 30 天前的会话历史（保留近 30 天在本地）</span>
+mkdir -p /Volumes/KESU/Archive/codely-chats
+find ~/.codely-cli/tmp -path '*/chats/*.jsonl' -mtime +30 -print0 \
+  | xargs -0 tar -czf "/Volumes/KESU/Archive/codely-chats/chats-$(date +%Y%m%d-%H%M%S).tgz" -T -
+<span class="c">#   ↑ 文件名带时间戳，避免重复执行覆盖同名包</span>
+<span class="c">#   ↑ 先归档并校验 tar 包，再手动删除源 .jsonl</span>
+
+<span class="c"># 4) 项目侧 UnityInsight 索引（可重建）</span>
+find ~/Projects -type d -path '*/.codely-cli/UnityInsight' -prune -exec rm -rf {} +
+
+<span class="c"># 5) 保留勿动：</span>
+<span class="c">#   ~/.codely/cowork-settings.json   Cowork 配置</span>
+<span class="c">#   ~/.codely-cli/{CODELY.md,memory.md,skills,policies}</span>
+<span class="c">#   ~/.codely-cli/{settings,model-config,org,oauth_creds,mcp-oauth-tokens}.json</span>
+<span class="c">#   ~/Library/Preferences/dev.codelycowork.desktop.plist</span></div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:16px">
+    <b>执行顺序建议：</b>① 先做 A 级缓存（零风险、立刻见效 62 GB）→ ② 腾出空间后再做 B 级删库（重建需空间）→
+    ③ Hub 内卸载 C 级旧版本 → ④ 最后做 D 级迁移。
+    全程建议保持外接盘 KESU 连接，若中途需要回滚可从 KESU 取回。
+  </div>
+</section>
+
+<footer>
+  <p>本报告由 <code>du -shx</code> / <code>df -h</code> / <code>find</code> / <code>stat</code> 只读采集生成 · 扫描时点 <code>2026-11-04 09:36 CST</code> · 主机 <code>yuumix 的 MacBook Pro</code></p>
+  <p style="margin-top:6px">未执行任何删除、移动或修改操作。所有路径均已核对实际存在与体积。<code>~</code> = <code>/Users/yuumix</code></p>
+</footer>
+
+</div>
+
+<script>
+/* ============ 数据 ============ */
+const GB = 1024;
+
+const TOPBARS = [
+  {n:'/Users',        v:210, c:'#4c8dff'},
+  {n:'/Applications',v:103, c:'#a371f7'},
+  {n:'/private',      v:6.7, c:'#3fb950'},
+  {n:'/System',       v:6.5, c:'#39c5cf'},
+  {n:'/Library',      v:4.2, c:'#f778ba'},
+  {n:'/opt',          v:3.5, c:'#ff9e64'},
+  {n:'APFS 快照/预启', v:10,  c:'#6b7889'}
+];
+
+const HOME_TM = [
+  {n:'Library',       v:88,   c:'#4c8dff'},
+  {n:'Projects',      v:59,   c:'#a371f7'},
+  {n:'.codely-cli',   v:23,   c:'#f778ba'},
+  {n:'Movies',        v:8.0,  c:'#ff9e64'},
+  {n:'Applications',  v:6.3,  c:'#39c5cf'},
+  {n:'Downloads',     v:6.2,  c:'#3fb950'},
+  {n:'Desktop',       v:4.5,  c:'#d29922'},
+  {n:'.workbuddy',    v:2.2,  c:'#f85149'},
+  {n:'.dotnet',       v:1.7,  c:'#6b7889'},
+  {n:'.vscode',       v:1.6,  c:'#6b7889'},
+  {n:'.minimax',      v:1.4,  c:'#6b7889'},
+  {n:'.codely',       v:1.4,  c:'#6b7889'},
+  {n:'.junie',        v:1.3,  c:'#6b7889'},
+  {n:'其它合计',       v:1.5,  c:'#2a3240'}
+];
+
+const LIB_BARS = [
+  {n:'Application Support', v:39,  c:'#4c8dff'},
+  {n:'Caches',              v:33,  c:'#f778ba'},
+  {n:'Tuanjie (cache)',     v:7.8, c:'#39c5cf'},
+  {n:'Unity (cache)',       v:5.6, c:'#a371f7'},
+  {n:'Logs',                v:0.64,c:'#ff9e64'},
+  {n:'Containers',          v:0.49,c:'#3fb950'},
+  {n:'Python',              v:0.17,c:'#6b7889'},
+  {n:'其它',                 v:0.2,c:'#2a3240'}
+];
+
+const ED_BARS = [
+  {n:'Tuanjie 2022.3.62t17 ★', v:23,  c:'#4c8dff'},
+  {n:'Tuanjie 2022.3.62t16 ✕', v:21,  c:'#f85149'},
+  {n:'Tuanjie 2022.3.61t14 ✕', v:15,  c:'#f85149'},
+  {n:'Unity 2022.3.62f3c1 ★',  v:11,  c:'#a371f7'},
+  {n:'Unity 2021.3.45f2c1 ★',  v:8.7, c:'#a371f7'}
+];
+
+const COWORK = [
+  {path:'/Applications/Tuanjie Cowork.app', size:603, unit:'M', role:'应用本体', action:'keep',
+   note:'Cowork 桌面应用本体，必需保留'},
+  {path:'~/Library/Application Support/Tuanjie Cowork/bin/node', size:115, unit:'M', role:'内置运行时', action:'keep',
+   note:'Electron 内置 Node 运行时'},
+  {path:'~/Library/Application Support/Tuanjie Cowork/bin/codely', size:100, unit:'M', role:'内置运行时', action:'keep',
+   note:'内嵌 Codely CLI 二进制'},
+  {path:'~/Library/Application Support/Tuanjie Cowork/bin/lib', size:54, unit:'M', role:'内置运行时', action:'keep',
+   note:'运行时依赖库'},
+  {path:'~/Library/Application Support/Tuanjie Cowork/bin/unity-insight-cli', size:0.004, unit:'M', role:'内置运行时', action:'keep',
+   note:'Unity Insight CLI 入口脚本'},
+  {path:'~/Library/Caches/dev.codelycowork.desktop', size:70, unit:'M', role:'Web 缓存', action:'safe',
+   note:'可安全删除，重启后自动重建'},
+  {path:'~/Library/WebKit/dev.codelycowork.desktop', size:1.9, unit:'M', role:'Web 缓存', action:'safe',
+   note:'WebKit 缓存，可安全删除'},
+  {path:'~/Library/Preferences/dev.codelycowork.desktop.plist', size:0.136, unit:'M', role:'配置', action:'keep',
+   note:'应用偏好设置，保留'},
+  {path:'~/.codely/cowork-settings.json', size:0.0014, unit:'M', role:'配置', action:'keep',
+   note:'Cowork 主配置（含 lock 伴生文件）'},
+  {path:'~/.codely/logs/cowork-*.log  (118 个文件)', size:456, unit:'M', role:'运行日志', action:'safe',
+   note:'2026-07-10 ~ 2026-11-04 日志，建议删除 14 天前的'},
+  {path:'~/.codely/logs/core-*.log', size:892, unit:'M', role:'运行日志', action:'safe',
+   note:'Codely 核心日志，最大单文件 60 M'},
+  {path:'~/.codely/sessions', size:34, unit:'M', role:'会话元数据', action:'keep',
+   note:'会话索引，工作数据'},
+  {path:'~/.codely-cli/tmp/*/chats', size:20.19, unit:'G', role:'会话历史', action:'move',
+   note:'★ 主体。2026-10 占 13.9 G / 2026-11 占 2.5 G，建议归档到 KESU 而非删除'},
+  {path:'~/.codely-cli/tmp/*/tasks', size:0.16, unit:'G', role:'任务产物', action:'move',
+   note:'任务执行产物，可归档'},
+  {path:'~/.codely-cli/tmp/*/tool-call-artifacts', size:0.18, unit:'G', role:'工具产物', action:'move',
+   note:'工具调用中间产物，可归档'},
+  {path:'~/.codely-cli/tmp/*/file-history', size:0.13, unit:'G', role:'文件快照', action:'move',
+   note:'文件历史快照，可归档'},
+  {path:'~/.codely-cli/tmp/bin/dotnet', size:594, unit:'M', role:'工具运行时', action:'safe',
+   note:'临时下载的 .NET 运行时，可重新获取'},
+  {path:'~/.codely-cli/tmp/bin/rg', size:3.2, unit:'M', role:'工具运行时', action:'safe',
+   note:'ripgrep 二进制'},
+  {path:'~/.codely-cli/cache/unity-packages', size:106, unit:'M', role:'包缓存', action:'safe',
+   note:'Unity 包缓存，可重新下载'},
+  {path:'~/.codely-cli/skills', size:0.39, unit:'M', role:'技能配置', action:'keep',
+   note:'用户级技能目录（Odin 系列等），必需保留'},
+  {path:'~/.codely-cli/policies', size:0.008, unit:'M', role:'策略配置', action:'keep', note:'权限策略'},
+  {path:'~/.codely-cli/auto-saves', size:1.1, unit:'M', role:'自动保存', action:'keep', note:'会话自动保存'},
+  {path:'~/.codely-cli/crash-logs', size:0.084, unit:'M', role:'崩溃日志', action:'safe', note:'可删除'},
+  {path:'~/.codely-cli/CODELY.md', size:0.004, unit:'M', role:'记忆', action:'keep', note:'结构化记忆，必需保留'},
+  {path:'~/.codely-cli/memory.md', size:0.004, unit:'M', role:'记忆', action:'keep', note:'全局记忆，必需保留'},
+  {path:'~/.codely-cli/mcp-oauth-tokens.json', size:0.004, unit:'M', role:'凭据', action:'keep', note:'MCP 鉴权令牌，勿删'},
+  {path:'~/.codely-cli/{settings,model-config,org,oauth_creds}.json', size:0.016, unit:'M', role:'配置', action:'keep',
+   note:'核心配置与凭据，勿删'},
+  {path:'~/.unity-insight', size:72, unit:'M', role:'索引', action:'safe', note:'全局 Unity Insight 索引，可重建'},
+  {path:'~/Projects/Unity/RTT/.codely-cli/UnityInsight', size:1.8, unit:'G', role:'项目索引', action:'regen',
+   note:'★ 单项目最大索引，RTT 项目专用，可重建'},
+  {path:'~/Projects/Tuanjie/Tuanjie2DProject/.codely-cli/UnityInsight', size:544, unit:'M', role:'项目索引', action:'regen',
+   note:'可重建'},
+  {path:'~/Projects/Unity/PeekOutside/.codely-cli/UnityInsight', size:496, unit:'M', role:'项目索引', action:'regen',
+   note:'可重建'},
+  {path:'~/Projects/Unity/AesirFramework/.codely-cli/UnityInsight', size:469, unit:'M', role:'项目索引', action:'regen',
+   note:'可重建'},
+  {path:'~/Projects/Unity/AesirInspector/.codely-cli/UnityInsight', size:267, unit:'M', role:'项目索引', action:'regen',
+   note:'可重建'},
+  {path:'~/Library/Application Support/TuanjieWebGLHost', size:271, unit:'M', role:'Cowork 依赖', action:'keep',
+   note:'Cowork 的 WebGL 预览宿主'},
+  {path:'~/Library/Application Support/TuanjieCowork (上级)', size:0, unit:'M', role:'—', action:'keep',
+   note:'占位，实际内容全在 bin/ 下'}
+];
+
+const ALL = [
+  // ===== A 级：缓存与日志 =====
+  {path:"~/Library/Application Support/Tabbit Browser/Default/Service Worker", size:9.1, u:'G', grade:'A', desc:'Tabbit 浏览器 Service Worker 缓存，可重建'},
+  {path:"~/Library/Tuanjie/cache/packages", size:5.4, u:'G', grade:'A', desc:'团结引擎包缓存，可重新下载'},
+  {path:"~/Library/Tuanjie/cache/npm", size:2.4, u:'G', grade:'A', desc:'团结引擎 npm 包缓存'},
+  {path:"~/Library/Unity/cache/packages", size:3.7, u:'G', grade:'A', desc:'Unity 包缓存，可重新下载'},
+  {path:"~/Library/Unity/cache/npm", size:1.7, u:'G', grade:'A', desc:'Unity npm 包缓存'},
+  {path:"~/Library/Caches/JetBrains/Rider2026.2/acp-agents", size:7.0, u:'G', grade:'A', desc:'Rider AI agent 缓存'},
+  {path:"~/Library/Caches/JetBrains/Toolbox/backup", size:6.2, u:'G', grade:'A', desc:'Toolbox 旧版本备份'},
+  {path:"~/Library/Caches/JetBrains/Toolbox/download", size:2.2, u:'G', grade:'A', desc:'已下载的 Rider dmg（单个 2.0 G）'},
+  {path:"~/Library/Caches/JetBrains/Rider2026.2/plugins", size:0.98, u:'G', grade:'A', desc:'Rider 插件缓存'},
+  {path:"~/Library/Caches/JetBrains/Rider2026.2/index", size:0.53, u:'G', grade:'A', desc:'Rider 索引缓存'},
+  {path:"~/Library/Caches/JetBrains/Rider2026.2/jcef_cache", size:0.31, u:'G', grade:'A', desc:'Rider JCEF 缓存'},
+  {path:"~/Library/Caches/JetBrains/Rider2026.2/caches", size:0.30, u:'G', grade:'A', desc:'Rider 通用缓存'},
+  {path:"~/Library/Caches/ru.keepcoder.Telegram", size:2.9, u:'G', grade:'A', desc:'Telegram 缓存'},
+  {path:"~/Library/Caches/com.tencent.xinWeChat", size:1.9, u:'G', grade:'A', desc:'微信缓存（含 519 M 安装包）'},
+  {path:"~/Library/Caches/Tabbit Browser", size:1.9, u:'G', grade:'A', desc:'Tabbit 浏览器缓存'},
+  {path:"~/Library/Application Support/LarkShell/update", size:2.1, u:'G', grade:'A', desc:'飞书更新包（含 580 M zip）'},
+  {path:"~/Library/Application Support/LarkShell/aha/users/*/profile_explorer/Service Worker", size:2.5, u:'G', grade:'A', desc:'飞书内置浏览器 SW 缓存，可重建（勿删同级数据）'},
+  {path:"~/Library/Application Support/LarkShell/aha/users/*/morpheus", size:0.003, u:'G', grade:'E', desc:'★ 飞书消息数据库（database + datafile），真实用户数据，勿删'},
+  {path:"~/Library/Application Support/LarkShell/aha/users/*/profile_explorer/{IndexedDB,Local Storage,Session Storage,History}", size:0.008, u:'G', grade:'E', desc:'★ 飞书登录态与浏览记录，勿删'},
+  {path:"~/Library/Caches/qoder-cn-updater", size:0.63, u:'G', grade:'A', desc:'Qoder 更新包'},
+  {path:"~/Library/Caches/@hilodesktop-updater", size:0.61, u:'G', grade:'A', desc:'Hilo 更新包'},
+  {path:"~/Library/Caches/@mmx-agentelectron-updater", size:0.60, u:'G', grade:'A', desc:'MiniMax 更新包'},
+  {path:"~/Library/Caches/@craft-agentelectron-updater", size:0.52, u:'G', grade:'A', desc:'Craft Agents 更新包'},
+  {path:"~/Library/Caches/xiaohei-daily-assistant-updater", size:0.39, u:'G', grade:'A', desc:'小黑助手更新包'},
+  {path:"~/Library/Caches/com.tencent.workbuddy.mac.BundleMigration", size:0.96, u:'G', grade:'A', desc:'WorkBuddy 迁移缓存'},
+  {path:"~/Library/Caches/Homebrew", size:0.95, u:'G', grade:'A', desc:'Homebrew 下载缓存'},
+  {path:"~/Library/Caches/ms-playwright", size:0.55, u:'G', grade:'A', desc:'Playwright 浏览器二进制'},
+  {path:"~/Library/Application Support/Code/CachedExtensionVSIXs", size:0.80, u:'G', grade:'A', desc:'VSCode 已下载扩展包'},
+  {path:"~/Library/Application Support/Cindy/Cache", size:0.44, u:'G', grade:'A', desc:'Cindy 缓存'},
+  {path:"~/.codely/logs", size:1.3, u:'G', grade:'A', desc:'Codely 日志（cowork 456 M + core 892 M）'},
+  {path:"~/.junie/logs", size:1.2, u:'G', grade:'A', desc:'Junie 日志（含 808 M gzip）'},
+  {path:"~/Library/Logs", size:0.64, u:'G', grade:'A', desc:'系统与应用日志'},
+  {path:"~/Library/Caches/com.unity3d.UnityEditor", size:0.32, u:'G', grade:'A', desc:'Unity 编辑器缓存'},
+  {path:"~/Library/Caches/cn.yousandi.TuanjieEditor", size:0.28, u:'G', grade:'A', desc:'团结引擎缓存'},
+  {path:"~/Library/Caches/velopack", size:0.27, u:'G', grade:'A', desc:'velopack 更新缓存'},
+  {path:"~/Library/Caches/pip", size:0.21, u:'G', grade:'A', desc:'pip 下载缓存'},
+  {path:"~/.codely-cli/tmp/bin/dotnet", size:0.58, u:'G', grade:'A', desc:'临时 .NET 运行时，可重新获取'},
+  {path:"~/.codely-cli/cache/unity-packages", size:0.11, u:'G', grade:'A', desc:'Unity 包缓存'},
+  {path:"~/.codely-cli/crash-logs", size:0.08, u:'M', grade:'A', desc:'崩溃日志'},
+
+  // ===== B 级：可再生 =====
+  {path:"~/Projects/Unity/RTT/Library", size:8.3, u:'G', grade:'B', desc:'Unity 库（含 1.7 G UnityInsight），可重建'},
+  {path:"~/Projects/Unity/ElementMystery/Library", size:7.2, u:'G', grade:'B', desc:'Unity 库（含 2.4 G UnityInsight），可重建'},
+  {path:"~/Projects/Tuanjie/Tuanjie2DProject/Library", size:3.5, u:'G', grade:'B', desc:'团结库，可重建'},
+  {path:"~/Projects/Unity/PeekOutside/Library", size:3.9, u:'G', grade:'B', desc:'Unity 库，可重建'},
+  {path:"~/Projects/Unity/EventModule/Library", size:3.4, u:'G', grade:'B', desc:'Unity 库（含 1.1 G UnityInsight），可重建'},
+  {path:"~/Projects/Unity/AesirFramework/Library", size:2.8, u:'G', grade:'B', desc:'Unity 库（含 480 M UnityInsight），可重建'},
+  {path:"~/Projects/Unity/LocalizationDemo/Library", size:2.6, u:'G', grade:'B', desc:'Unity 库，可重建'},
+  {path:"~/Projects/Unity/AesirInspector/Library", size:0.57, u:'G', grade:'B', desc:'Unity 库，可重建'},
+  {path:"~/Projects/Unity/OdinInspectorSources/Library", size:0.34, u:'G', grade:'B', desc:'Unity 库，可重建'},
+  {path:"~/Projects/Unity/RTT/.codely-cli/UnityInsight", size:1.8, u:'G', grade:'B', desc:'★ 项目侧独立索引，最大单项'},
+  {path:"~/Projects/Tuanjie/Tuanjie2DProject/.codely-cli/UnityInsight", size:0.54, u:'G', grade:'B', desc:'项目侧独立索引'},
+  {path:"~/Projects/Unity/PeekOutside/.codely-cli/UnityInsight", size:0.50, u:'G', grade:'B', desc:'项目侧独立索引'},
+  {path:"~/Projects/Unity/AesirFramework/.codely-cli/UnityInsight", size:0.47, u:'G', grade:'B', desc:'项目侧独立索引'},
+  {path:"~/Projects/Unity/AesirInspector/.codely-cli/UnityInsight", size:0.27, u:'G', grade:'B', desc:'项目侧独立索引'},
+  {path:"~/.unity-insight", size:0.07, u:'G', grade:'B', desc:'全局索引，可重建'},
+
+  // ===== C 级：旧版本编辑器 =====
+  {path:"/Applications/Tuanjie/Hub/Editor/2022.3.62t16", size:21, u:'G', grade:'C', desc:'★ 无项目引用，可从 Tuanjie Hub 卸载'},
+  {path:"/Applications/Tuanjie/Hub/Editor/2022.3.61t14", size:15, u:'G', grade:'C', desc:'★ 无项目引用，可从 Tuanjie Hub 卸载'},
+  {path:"/Applications/Tuanjie/Hub/Editor/2022.3.62t17", size:23, u:'G', grade:'C', desc:'★ 在用（PeekOutside / Tuanjie2DProject），保留'},
+  {path:"/Applications/Unity/Hub/Editor/2022.3.62f3c1", size:11, u:'G', grade:'C', desc:'在用（5 个项目），保留'},
+  {path:"/Applications/Unity/Hub/Editor/2021.3.45f2c1", size:8.7, u:'G', grade:'C', desc:'在用（ElementMystery / OdinInspectorSources），保留'},
+
+  // ===== D 级：可迁移 =====
+  {path:"~/Library/Application Support/Steam/steamapps/common/Hollow Knight Silksong", size:7.7, u:'G', grade:'D', desc:'游戏，Steam 改库路径迁至 KESU'},
+  {path:"~/Movies/FocuSee Project", size:7.1, u:'G', grade:'D', desc:'★ 录屏工程，含 1.5 G 单个 mp4，建议迁移'},
+  {path:"~/Movies/JianyingPro", size:0.79, u:'G', grade:'D', desc:'剪映草稿'},
+  {path:"~/Downloads", size:6.2, u:'G', grade:'D', desc:'含 4.6 G 仓库备份、多个 dmg/zip 安装包'},
+  {path:"~/Desktop", size:4.5, u:'G', grade:'D', desc:'边际棋盘 1.6 G + 重复 zip 656 M'},
+  {path:"~/Documents", size:0.98, u:'G', grade:'D', desc:'文档'},
+  {path:"~/Library/Application Support/Steam/steamapps/common/Minishoot' Adventures", size:1.5, u:'G', grade:'D', desc:'游戏，迁至 KESU'},
+  {path:"~/Library/Application Support/Steam/steamapps/common/Celeste", size:1.1, u:'G', grade:'D', desc:'游戏，迁至 KESU'},
+  {path:"~/Library/Application Support/Steam/steamapps/common/LONESTAR", size:0.83, u:'G', grade:'D', desc:'游戏，迁至 KESU'},
+  {path:"~/Projects/Unity/RTT/Assets 等项目源文件", size:26, u:'G', grade:'D', desc:'各项目 Assets 源文件（约 26 G，不含 Library）'},
+
+  // ===== E 级：必须保留 =====
+  {path:"/Applications/Tuanjie/Hub/Editor (当前版本合计)", size:23, u:'G', grade:'E', desc:'当前活跃编辑器，必须本地'},
+  {path:"/Applications/Unity/Hub/Editor (两个在用版本)", size:19.7, u:'G', grade:'E', desc:'Unity 编辑器，必须本地'},
+  {path:"/Applications/Tuanjie Cowork.app", size:0.60, u:'G', grade:'E', desc:'Cowork 应用本体，必须本地'},
+  {path:"~/Applications/Rider.app", size:6.3, u:'G', grade:'E', desc:'Rider IDE，必须本地'},
+  {path:"/opt/homebrew", size:3.5, u:'G', grade:'E', desc:'Homebrew 工具链，必须本地'},
+  {path:"~/.dotnet", size:1.7, u:'G', grade:'E', desc:'.NET SDK，必须本地'},
+  {path:"~/.nvm", size:0.32, u:'G', grade:'E', desc:'Node 版本管理，必须本地'},
+  {path:"~/.cargo", size:0.19, u:'G', grade:'E', desc:'Rust 工具链，必须本地'},
+  {path:"~/.npm", size:0.65, u:'G', grade:'E', desc:'npm 全局包（缓存部分可清）'},
+  {path:"~/.nuget", size:0.43, u:'G', grade:'E', desc:'NuGet 包（缓存部分可清）'},
+  {path:"~/.vscode/extensions", size:1.6, u:'G', grade:'E', desc:'VSCode 扩展，必须本地'},
+  {path:"/private/var/db", size:2.4, u:'G', grade:'E', desc:'系统数据库，不可动'},
+  {path:"/private/var/folders", size:2.2, u:'G', grade:'E', desc:'系统临时目录，不可动'},
+  {path:"/Library (系统级)", size:4.2, u:'G', grade:'E', desc:'系统托管库，不可动'},
+  {path:"~/.codely-cli/tmp/*/chats", size:20.19, u:'G', grade:'E', desc:'★ Cowork/CLI 会话历史，工作数据，归档而非删除'},
+  {path:"~/.codely-cli/skills", size:0.39, u:'M', grade:'E', desc:'用户级技能目录，必须保留'},
+  {path:"~/.codely-cli/mcp-oauth-tokens.json", size:0.004, u:'M', grade:'E', desc:'MCP 凭据，勿删'},
+  {path:"~/.codely/cowork-settings.json", size:0.0014, u:'M', grade:'E', desc:'Cowork 配置，勿删'},
+  {path:"~/Library/Application Support/Tuanjie Cowork/bin", size:0.26, u:'G', grade:'E', desc:'Cowork 内置运行时，必须保留'}
+];
+
+/* ============ 渲染工具 ============ */
+function fmt(v,u){
+  if(u==='M') return (v>=1024? (v/1024).toFixed(2)+' G' : v.toFixed(v<1?3:1)+' M');
+  return (v>=1? v.toFixed(v<10?1:0) : v.toFixed(2))+(u||'G');
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* 顶部条形图 */
+(function(){
+  const el = document.getElementById('top-bars');
+  const max = Math.max(...TOPBARS.map(b=>b.v));
+  el.innerHTML = TOPBARS.map(b=>`
+    <div class="bar-row">
+      <span class="lb">${esc(b.n)}</span>
+      <span class="bar-track"><span class="bar-fill" style="width:${(b.v/max*100).toFixed(1)}%;background:${b.c}"></span></span>
+      <span class="vl">${b.v} G</span>
+    </div>`).join('');
+})();
+
+/* 通用条形图 */
+function bars(id, data, maxv){
+  const el=document.getElementById(id);
+  const mx = maxv || Math.max(...data.map(b=>b.v));
+  el.innerHTML = data.map(b=>`
+    <div class="bar-row">
+      <span class="lb">${esc(b.n)}</span>
+      <span class="bar-track"><span class="bar-fill" style="width:${(b.v/mx*100).toFixed(1)}%;background:${b.c}"></span></span>
+      <span class="vl">${b.v} G</span>
+    </div>`).join('');
+}
+bars('lib-bars', LIB_BARS);
+bars('ed-bars', ED_BARS);
+
+/* Treemap */
+(function(){
+  const el=document.getElementById('tm-home');
+  const total = HOME_TM.reduce((s,b)=>s+b.v,0);
+  el.innerHTML = HOME_TM.map(b=>{
+    const pct = b.v/total*100;
+    const cls = pct>12?'':(pct>4?' sm':' xs');
+    return `<div class="tm-item${cls}" style="flex:${b.v} 1 0;background:${b.c};opacity:${b.n==='其它合计'?.5:1}"
+      title="${esc(b.n)} — ${b.v} GB (${pct.toFixed(1)}%)">
+      <div class="t">${esc(b.n)}</div><div class="s">${b.v} G · ${pct.toFixed(1)}%</div></div>`;
+  }).join('');
+})();
+
+/* Cowork 表 */
+const CW_ACT = {
+  safe:{t:'可安全删除', c:'p-safe'},
+  regen:{t:'可重建',   c:'p-regen'},
+  move:{t:'建议归档到 KESU', c:'p-move'},
+  keep:{t:'必须保留',  c:'p-keep'}
+};
+(function(){
+  const tb = document.querySelector('#tbl-cowork tbody');
+  tb.innerHTML = COWORK.map(r=>{
+    const a = CW_ACT[r.action];
+    const sz = r.unit==='M' ? r.size.toFixed(r.size<1?3:1)+' M' : r.size.toFixed(r.size<10&&r.size>1?2:1)+' '+r.unit;
+    return `<tr>
+      <td class="pth">${esc(r.path)}</td>
+      <td class="sz">${sz}</td>
+      <td><span style="color:var(--fg2)">${esc(r.role)}</span></td>
+      <td><span class="pill ${a.c}">${a.t}</span></td>
+      <td style="color:var(--fg2)">${esc(r.note)}</td>
+    </tr>`;
+  }).join('');
+})();
+
+/* 全量表 + 筛选 + 排序 */
+const GRADE = {
+  A:{t:'A 安全清理', c:'p-safe'},
+  B:{t:'B 可再生',   c:'p-regen'},
+  C:{t:'C 需确认',   c:'p-check'},
+  D:{t:'D 可迁移',   c:'p-move'},
+  E:{t:'E 必须保留', c:'p-keep'}
+};
+let sortKey='size', sortAsc=false;
+function renderAll(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const f = document.getElementById('f').value;
+  let rows = ALL.filter(r=>{
+    if(f && r.grade!==f) return false;
+    if(q && !(r.path.toLowerCase().includes(q) || (r.desc||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  rows.sort((a,b)=>{
+    const av = a.u==='M' ? a.size/1024 : a.size;
+    const bv = b.u==='M' ? b.size/1024 : b.size;
+    let c = (typeof av==='string'? String(av).localeCompare(String(bv)) : av-bv);
+    if(sortKey==='path') c = a.path.localeCompare(b.path);
+    if(sortKey==='grade') c = a.grade.localeCompare(b.grade);
+    return sortAsc ? c : -c;
+  });
+  const tb = document.querySelector('#tbl-all tbody');
+  tb.innerHTML = rows.map(r=>{
+    const g = GRADE[r.grade];
+    const sz = r.u==='M' ? r.size.toFixed(r.size<1?3:1)+' M' : r.size.toFixed(r.size<10&&r.size>1?2:1)+' '+r.u;
+    return `<tr>
+      <td class="pth">${esc(r.path)}</td>
+      <td class="sz">${sz}</td>
+      <td><span class="pill ${g.c}">${g.t}</span></td>
+      <td style="color:var(--fg2)">${esc(r.desc)}</td>
+    </tr>`;
+  }).join('');
+  const sum = rows.reduce((s,r)=> s + (r.u==='M'? r.size/1024 : r.size), 0);
+  document.getElementById('cnt').textContent =
+    `${rows.length} 项 · 列示体积总计 ${sum.toFixed(1)} GB（含必须保留项，非可回收量）`;
+}
+document.getElementById('q').addEventListener('input', renderAll);
+document.getElementById('f').addEventListener('change', renderAll);
+document.querySelectorAll('#tbl-all th').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const k = th.dataset.k;
+    if(sortKey===k) sortAsc = !sortAsc; else { sortKey=k; sortAsc=false; }
+    renderAll();
+  });
+});
+renderAll();
+
+/* 复制按钮 */
+document.querySelectorAll('.copy').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const cmd = b.parentElement.cloneNode(true);
+    const btn = cmd.querySelector('.copy'); if(btn) btn.remove();
+    const text = cmd.textContent;
+    navigator.clipboard.writeText(text).then(()=>{
+      const o=b.textContent; b.textContent='已复制';
+      setTimeout(()=>b.textContent=o,1400);
+    });
+  });
+});
+</script>
+</body>
+</html>

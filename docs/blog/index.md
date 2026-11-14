@@ -6,4 +6,4 @@
 
 ### Unity 中文社区
 
-为 [Unity 中文社区](https://developer.unity.cn/)（团结引擎官方社区）撰写的文章专栏，以 Odin Inspector 系列笔记为主：入门与许可证、序列化系统、Attributes、自定义 Drawer、编辑器窗口、实战案例与坑点速查。文章在本站与社区同步发布，本站版本保留完整的代码示例与排版。
+为 [Unity 中文社区](https://developer.unity.cn/)（团结引擎官方社区）撰写的文章专栏，以 Odin Inspector 系列笔记为主：入门与许可证、序列化系统、Attributes、自定义 Drawer、编辑器窗口、实战案例与坑点速查；另有 AI 工作流方向的长文，如 Rider 内置 MCP Server 接入实战（Rider 2025.2+ 零安装，把 Unity 编译等待从分钟级压到秒级）。文章在本站与社区同步发布，本站版本保留完整的代码示例与排版。
