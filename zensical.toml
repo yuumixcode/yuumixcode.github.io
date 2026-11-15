@@ -60,6 +60,7 @@ nav = [
     { "AI" = [
         "ai/index.md",
         "ai/bento-presentation-guide.md",
+        "ai/claude-opus-5-5-vs-deepseek-v4-1-flash.md",
         "ai/doc-to-deck-and-video-workflows.md",
         "ai/personal-ip-generator-guide.md",
         "ai/voice-clone-tts-guide.md",
@@ -86,3 +87,21 @@ features = [
     "navigation.tabs.sticky",
     "content.code.copy",
 ]
+
+# 双主题:浅色=奶油纸感(saint11),深色=deepnight 式 navy 像素
+# 实际配色在 extra.css 里按 scheme 覆写 --md-* 变量,这里 primary/accent 只占位
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "green"
+accent = "amber"
+toggle.icon = "material/brightness-7"
+toggle.name = "切换至夜间模式"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "green"
+accent = "amber"
+toggle.icon = "material/brightness-4"
+toggle.name = "切换至日间模式"

@@ -86,7 +86,7 @@ button.md-top {
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  background: #ffffff;
+  background: var(--slides-card-bg, #ffffff);
   border: 1px solid var(--slides-border);
   border-radius: 8px;
   text-decoration: none;
@@ -253,6 +253,10 @@ button.md-top {
   --yuumix-cyan:     #2A9D8F;
   --yuumix-red:      #E76F51;
   --yuumix-honey:    #E9C46A;
+  --yuumix-dialog-bg: #FFF8DC;
+  --yuumix-mood-chill: #E8F1F8;
+  --yuumix-mood-hype: #FFE4D1;
+  --yuumix-mood-friendly: #FFF4D1;
 }
 
 /* ---------- Section 通用 ---------- */
@@ -275,7 +279,7 @@ button.md-top {
   justify-content: center;
   background: linear-gradient(180deg,
     var(--yuumix-warm-bg) 0%,
-    #fff 100%);
+    var(--yuumix-cool-bg) 100%);
 }
 
 .yuumix-section__body {
@@ -381,7 +385,7 @@ button.md-top {
 
 /* ---------- RPG 风格对话框 ---------- */
 .dialog-box {
-  background: #FFF8DC;
+  background: var(--yuumix-dialog-bg);
   border: 4px solid var(--yuumix-ink);
   border-radius: 4px;
   padding: 14px 18px;
@@ -416,9 +420,9 @@ button.md-top {
 }
 
 /* 语气配色(由 data-mood 控制) */
-[data-mood="chill"]    .dialog-box { background: var(--yuumix-cool-bg); }
-[data-mood="hype"]     .dialog-box { background: #FFE4D1; }
-[data-mood="friendly"] .dialog-box { background: #FFF4D1; }
+[data-mood="chill"]    .dialog-box { background: var(--yuumix-mood-chill); }
+[data-mood="hype"]     .dialog-box { background: var(--yuumix-mood-hype); }
+[data-mood="friendly"] .dialog-box { background: var(--yuumix-mood-friendly); }
 
 /* ---------- 滑入动画(滚动到视图时由 JS 加 .is-visible) ---------- */
 .yuumix-dialog {
@@ -583,5 +587,378 @@ button.md-top {
   .yuumix-dialog--right .dialog-box::before,
   .yuumix-dialog--left .dialog-box::before {
     display: none;
+  }
+}
+
+/* ===================================================================
+ * 全站设计系统 — 像素骨架 + 手绘点缀,双主题
+ *   浅色 default:奶油纸感(saint11 式克制)
+ *   深色 slate:  deepnight 式 navy + 黄/青
+ * 像素化的是 UI 骨架(边框/硬阴影/方角/草平台),中文正文保持霞鹜文楷
+ * =================================================================== */
+
+:root,
+body[data-md-color-scheme="default"] {
+  --px-paper: #FAF3E7;
+  --px-card: #FFFBF2;
+  --px-ink: #2A2620;
+  --px-ink-soft: #6B6257;
+  --px-line: #2A2620;
+  --px-line-soft: #D8CDBB;
+  --px-accent: #C96F4A;
+  --px-accent-2: #4A7C59;
+  --px-honey: #E9C46A;
+  --px-on-accent: #FFF8EC;
+  --px-shadow: #2A2620;
+  --px-code-bg: #F1E9D8;
+  --px-th-bg: #F3E3C3;
+  --px-adm-title-bg: #E7EFE4;
+  --px-doodle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 12 L59 37 L86 41 L64 57 L73 84 L50 69 L29 85 L36 56 L14 40 L41 37 Z' fill='none' stroke='%234A7C59' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'/%3E%3Cpath d='M84 14 l6 6 M90 14 l-6 6' stroke='%23C96F4A' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='78' r='2.5' fill='%23E9C46A'/%3E%3C/svg%3E");
+
+  --md-default-bg-color: var(--px-paper);
+  --md-default-bg-color--light: var(--px-card);
+  --md-default-bg-color--lighter: #FFFDF8;
+  --md-default-bg-color--lightest: #FFFFFF;
+  --md-default-fg-color: var(--px-ink);
+  --md-default-fg-color--light: var(--px-ink-soft);
+  --md-default-fg-color--lighter: #9C9285;
+  --md-default-fg-color--lightest: #C9BFAF;
+  --md-primary-fg-color: var(--px-accent-2);
+  --md-accent-fg-color: var(--px-accent);
+  --md-typeset-a-color: var(--px-accent);
+  --md-code-bg-color: var(--px-code-bg);
+  --md-code-fg-color: var(--px-ink);
+}
+
+[data-md-color-scheme="slate"],
+body[data-md-color-scheme="slate"] {
+  --px-paper: #0F1420;
+  --px-card: #151C2C;
+  --px-ink: #E8E4D8;
+  --px-ink-soft: #9AA3B5;
+  --px-line: #46506A;
+  --px-line-soft: #2A3348;
+  --px-accent: #FFD23F;
+  --px-accent-2: #4DD8E6;
+  --px-on-accent: #0F1420;
+  --px-shadow: #05070D;
+  --px-code-bg: #0B101C;
+  --px-th-bg: #1A2234;
+  --px-adm-title-bg: #12303A;
+  --px-doodle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 12 L59 37 L86 41 L64 57 L73 84 L50 69 L29 85 L36 56 L14 40 L41 37 Z' fill='none' stroke='%234DD8E6' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'/%3E%3Cpath d='M84 14 l6 6 M90 14 l-6 6' stroke='%23FFD23F' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='78' r='2.5' fill='%23E9C46A'/%3E%3C/svg%3E");
+
+  --md-default-bg-color: var(--px-paper);
+  --md-default-bg-color--light: var(--px-card);
+  --md-default-bg-color--lighter: #202A40;
+  --md-default-bg-color--lightest: #273350;
+  --md-default-fg-color: var(--px-ink);
+  --md-default-fg-color--light: var(--px-ink-soft);
+  --md-default-fg-color--lighter: #6E7890;
+  --md-default-fg-color--lightest: #46506A;
+  --md-primary-fg-color: var(--px-card);
+  --md-accent-fg-color: var(--px-accent);
+  --md-typeset-a-color: var(--px-accent-2);
+  --md-code-bg-color: var(--px-code-bg);
+  --md-code-fg-color: var(--px-ink);
+
+  --yuumix-warm-bg: #0F1420;
+  --yuumix-cool-bg: #16203A;
+  --yuumix-ink: #E8E4D8;
+  --yuumix-orange: #FFD23F;
+  --yuumix-cyan: #4DD8E6;
+  --yuumix-red: #FF6B5E;
+  --yuumix-dialog-bg: #151C2C;
+  --yuumix-mood-chill: #16203A;
+  --yuumix-mood-hype: #3A2418;
+  --yuumix-mood-friendly: #3A3018;
+
+  --slides-accent: #F87171;
+  --slides-accent-bg: #2A1512;
+  --slides-accent-border: #7F1D1D;
+  --slides-text: #E8E4D8;
+  --slides-text-2: #C9C2B4;
+  --slides-muted: #9AA3B5;
+  --slides-border: #46506A;
+  --slides-border-soft: #2A3348;
+  --slides-card-bg: #151C2C;
+}
+
+/* ---------- 头部 / 标签栏 ---------- */
+.md-header {
+  background: var(--px-paper);
+  color: var(--px-ink);
+  box-shadow: none;
+}
+
+.md-header__button,
+.md-header__topic {
+  color: var(--px-ink);
+}
+
+.md-tabs {
+  background: var(--px-paper);
+}
+
+.md-tabs__link {
+  color: var(--px-ink-soft);
+  opacity: 1;
+}
+
+.md-tabs__item--active {
+  border-bottom: none;
+}
+
+.md-tabs__item--active .md-tabs__link,
+.md-tabs__link--active {
+  color: var(--px-accent);
+  font-weight: 700;
+}
+
+.md-tabs__link:hover {
+  color: var(--px-ink);
+}
+
+/* ---------- 侧栏导航 ---------- */
+.md-nav__title {
+  color: var(--px-ink-soft);
+}
+
+.md-nav__link--active {
+  color: var(--px-accent-2);
+  font-weight: 700;
+  background: var(--px-th-bg);
+  border-radius: 0;
+}
+
+.md-nav__link:hover {
+  background: var(--md-default-bg-color--light);
+  border-radius: 0;
+}
+
+/* ---------- 按钮:方角 + 硬阴影 ---------- */
+.md-button {
+  background: var(--px-card);
+  color: var(--px-ink);
+  border: 3px solid var(--px-line);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--px-shadow);
+  font-weight: 700;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.md-button:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--px-shadow);
+  color: var(--px-ink);
+  border-color: var(--px-line);
+}
+
+.md-button--primary {
+  background: var(--px-accent);
+  color: var(--px-on-accent);
+}
+
+.md-button--primary:hover {
+  color: var(--px-on-accent);
+}
+
+/* ---------- 正文排版 ---------- */
+.md-typeset h1,
+.md-typeset h2 {
+  color: var(--px-ink);
+}
+
+.md-typeset a {
+  text-decoration: none;
+}
+
+.md-typeset a.yuumix-cta {
+  color: var(--yuumix-ink);
+  text-decoration: none;
+}
+
+.md-typeset a:hover {
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--px-accent-2);
+  text-underline-offset: 4px;
+}
+
+.md-typeset code {
+  background: var(--px-code-bg);
+  border-radius: 0;
+}
+
+.md-typeset pre {
+  border: 2px solid var(--px-line);
+  border-radius: 0;
+  box-shadow: 4px 4px 0 var(--px-shadow);
+}
+
+.md-typeset pre > code {
+  border-radius: 0;
+}
+
+/* 像素虚线分隔线 */
+.md-typeset hr {
+  border: none;
+  height: 4px;
+  background: repeating-linear-gradient(90deg,
+    var(--px-line) 0 8px, transparent 8px 16px);
+}
+
+.md-typeset blockquote {
+  background: var(--px-card);
+  border-left: 4px solid var(--px-accent-2);
+  border-radius: 0;
+}
+
+.md-typeset table {
+  border: 2px solid var(--px-line);
+  border-radius: 0;
+  box-shadow: 4px 4px 0 var(--px-shadow);
+}
+
+.md-typeset table th {
+  background: var(--px-th-bg);
+}
+
+.md-typeset table td {
+  border-color: var(--px-line-soft);
+}
+
+.md-typeset mark {
+  background: var(--px-honey);
+  color: #2A2620;
+}
+
+/* admonition:方角卡片化 */
+.md-typeset .admonition,
+.md-typeset details {
+  background: var(--px-card);
+  border: 2px solid var(--px-line);
+  border-radius: 0;
+  box-shadow: 4px 4px 0 var(--px-shadow);
+}
+
+.md-typeset .admonition-title,
+.md-typeset summary {
+  background: var(--px-adm-title-bg);
+  border-bottom: 2px solid var(--px-line);
+}
+
+/* ---------- 手绘贴纸徽章(歪斜圆角 = 手绘感) ---------- */
+.md-tag,
+.slides-card-tag {
+  border: 2px solid var(--px-accent);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  background: transparent;
+  color: var(--px-accent);
+  transform: rotate(-1deg);
+}
+
+/* ---------- 搜索 ---------- */
+.md-search__input {
+  background: var(--px-card);
+  color: var(--px-ink);
+  border: 2px solid var(--px-line);
+  border-radius: 0;
+}
+
+.md-search__input::placeholder {
+  color: var(--px-ink-soft);
+}
+
+.md-search__input:focus {
+  border-color: var(--px-accent);
+}
+
+/* ---------- 博客文章卡片 ---------- */
+article.md-post {
+  background: var(--px-card);
+  border: 3px solid var(--px-line);
+  border-radius: 0;
+  box-shadow: 5px 5px 0 var(--px-shadow);
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 2rem;
+}
+
+.md-post__meta {
+  color: var(--px-ink-soft);
+}
+
+/* ---------- 页脚 ---------- */
+.md-footer {
+  background: var(--px-card);
+  color: var(--px-ink-soft);
+}
+
+.md-footer-meta {
+  background: var(--px-paper);
+}
+
+.md-copyright {
+  color: var(--px-ink-soft);
+}
+
+/* ---------- 返回顶部 ---------- */
+button.md-top {
+  background: var(--px-card);
+  color: var(--px-ink);
+  border: 2px solid var(--px-line);
+  border-radius: 0;
+  box-shadow: 2px 2px 0 var(--px-shadow);
+}
+
+/* ---------- 首页手绘星星涂鸦 ---------- */
+.yuumix-section--hero::after {
+  content: "";
+  position: absolute;
+  top: 12%;
+  right: 8%;
+  width: 110px;
+  height: 110px;
+  background: var(--px-doodle) no-repeat center / contain;
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- 深色下首页组件对比度修正 ---------- */
+[data-md-color-scheme="slate"] .md-typeset a.yuumix-cta {
+  color: #0F1420;
+}
+
+[data-md-color-scheme="slate"] .yuumix-contact-links a:hover {
+  color: #0F1420;
+}
+
+[data-md-color-scheme="slate"] .yuumix-avatar,
+[data-md-color-scheme="slate"] .dialog-box {
+  box-shadow: 4px 4px 0 #05070D;
+}
+
+/* ---------- 杂项 ---------- */
+::selection {
+  background: var(--px-honey);
+  color: #2A2620;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--px-accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .yuumix-section--hero::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-particles,
+  .yuumix-scroll-hint {
+    animation: none;
   }
 }
