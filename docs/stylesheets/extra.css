@@ -962,3 +962,339 @@ button:focus-visible {
     animation: none;
   }
 }
+
+/* ===================================================================
+ * 首页作品展示(.px-show / .px-window)+ 导览卡片(.yuumix-cards)
+ *   配色全部引用 --px-* token,明暗主题自动适配
+ *   窗口是纯 CSS 绘制的像素 mock,不是真实截图占位
+ * =================================================================== */
+
+/* ---------- 展示行:文案 + mock 窗口,左右交错 ---------- */
+.px-show {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 2.5rem;
+  align-items: center;
+  max-width: 1000px;
+  margin: 2.5rem auto 0;
+}
+
+.px-show + .px-show { margin-top: 3.5rem; }
+
+.px-show--flip .px-show__text { order: 2; }
+.px-show--flip .px-window { order: 1; }
+
+.px-show__text h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+  color: var(--px-ink);
+}
+
+.px-show__text p {
+  margin: 0 0 0.9rem;
+  color: var(--px-ink-soft);
+}
+
+.px-show__list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.2rem;
+}
+
+.px-show__list li {
+  position: relative;
+  padding-left: 1.3rem;
+  margin: 0.35rem 0;
+  color: var(--px-ink);
+}
+
+.px-show__list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 0.6rem;
+  height: 0.6rem;
+  background: var(--px-accent);
+  box-shadow: 2px 2px 0 var(--px-shadow);
+}
+
+.px-show__actions {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.px-show__link {
+  color: var(--px-accent-2);
+  font-weight: 700;
+  border-bottom: 2px dashed var(--px-accent-2);
+}
+
+.px-show__link:hover {
+  text-decoration: none;
+  border-bottom-style: solid;
+}
+
+/* ---------- 像素 mock 窗口 ---------- */
+.px-window {
+  border: 4px solid var(--px-line);
+  background: var(--px-card);
+  box-shadow: 6px 6px 0 var(--px-shadow);
+  font-family: "JetBrains Mono", ui-monospace, "Menlo", "Consolas", monospace;
+}
+
+.px-window__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--px-th-bg);
+  border-bottom: 4px solid var(--px-line);
+  flex-wrap: nowrap;
+}
+
+.px-window__dots {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.px-window__dots i {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-right: 0.3rem;
+  border: 2px solid var(--px-line);
+  background: var(--px-honey);
+}
+
+.px-window__dots i:nth-child(2) { background: var(--px-accent); }
+.px-window__dots i:nth-child(3) { background: var(--px-accent-2); }
+
+.px-window__title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  color: var(--px-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.px-window__body {
+  padding: 1.1rem 1.2rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.px-row {
+  display: grid;
+  grid-template-columns: 34% 1fr;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.8rem;
+}
+
+.px-row__label {
+  text-align: right;
+  color: var(--px-ink-soft);
+}
+
+.px-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 1.5rem;
+  border: 2px solid var(--px-line);
+  background: var(--md-default-bg-color--lightest);
+}
+
+.px-field--num b {
+  display: block;
+  height: 100%;
+  background: var(--px-accent-2);
+  opacity: 0.55;
+}
+
+.px-field--num em {
+  position: absolute;
+  right: 0.45rem;
+  font-style: normal;
+  font-size: 0.72rem;
+  color: var(--px-ink);
+}
+
+.px-field--bool b {
+  width: 0.95rem;
+  height: 0.95rem;
+  margin-left: 0.45rem;
+  border: 2px solid var(--px-line);
+}
+
+.px-field--bool.is-on b { background: var(--px-accent-2); }
+
+.px-field--slider::before {
+  content: "";
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  top: 50%;
+  height: 2px;
+  background: var(--px-line-soft);
+}
+
+.px-field--slider b {
+  position: absolute;
+  top: 50%;
+  width: 0.9rem;
+  height: 1.3rem;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--px-line);
+  background: var(--px-accent);
+}
+
+.px-field--select em {
+  padding-left: 0.6rem;
+  font-style: normal;
+  font-size: 0.72rem;
+  color: var(--px-ink);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.px-field--chips b {
+  width: 1.2rem;
+  height: 0.8rem;
+  margin-left: 0.45rem;
+  border: 2px solid var(--px-line);
+  background: var(--px-honey);
+}
+
+.px-field--chips b.is-dim { opacity: 0.3; }
+
+.px-window__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.3rem;
+}
+
+.px-window__btn {
+  padding: 0.3rem 0.9rem;
+  border: 2px solid var(--px-line);
+  background: var(--px-accent);
+  color: var(--px-on-accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  box-shadow: 2px 2px 0 var(--px-shadow);
+}
+
+.px-window__caret {
+  font-size: 0.7rem;
+  color: var(--px-ink-soft);
+  animation: px-blink 1.2s steps(1) infinite;
+}
+
+@keyframes px-blink {
+  50% { opacity: 0; }
+}
+
+/* ---------- 架构层窗口变体 ---------- */
+.px-layers { gap: 0.45rem; }
+
+.px-layer {
+  padding: 0.65rem 0.8rem;
+  border: 2px solid var(--px-line);
+  background: var(--md-default-bg-color--lightest);
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--px-ink);
+}
+
+.px-layer.is-top { border-width: 3px; border-color: var(--px-accent); }
+.px-layer.is-mid { border-width: 3px; border-color: var(--px-accent-2); }
+
+.px-gap {
+  text-align: center;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--px-ink-soft);
+}
+
+/* ---------- 导览卡片网格 ---------- */
+.yuumix-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 1.25rem;
+  max-width: 1000px;
+  margin: 1.5rem auto 0;
+}
+
+.yuumix-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.2rem 1.25rem;
+  background: var(--px-card);
+  border: 3px solid var(--px-line);
+  box-shadow: 5px 5px 0 var(--px-shadow);
+  color: var(--px-ink);
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.yuumix-card:hover {
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 var(--px-shadow);
+  border-color: var(--px-accent);
+  color: var(--px-ink);
+  text-decoration: none;
+}
+
+.yuumix-card__icon {
+  width: 2.1rem;
+  height: 2.1rem;
+  color: var(--px-accent-2);
+  image-rendering: pixelated;
+  transition: color 0.15s ease;
+}
+
+.yuumix-card:hover .yuumix-card__icon { color: var(--px-accent); }
+
+.yuumix-card__title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--px-ink);
+}
+
+.yuumix-card__desc {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--px-ink-soft);
+}
+
+.yuumix-card__more {
+  margin-top: auto;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--px-accent);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 900px) {
+  .px-show {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+  .px-show--flip .px-show__text { order: 1; }
+  .px-show--flip .px-window { order: 2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .px-window__caret { animation: none; }
+  .yuumix-card { transition: none; }
+}
+
